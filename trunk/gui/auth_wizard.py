@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import gtk
-import configs
+import ini
 import pylast
 import webbrowser
+import os
 
 class AuthWizard(object):
 	
@@ -123,7 +124,7 @@ class AuthWizard(object):
 		else:
 			self.settings.set('name', output['name'], 'user')
 			self.settings.set('subscriber', str(output['subscriber']), 'user')
-			self.settings.set('session_key', output['key'])
+			self.settings.set('session_key', output['key'], 'user')
 			
 			self.proceed_on()
 			self.forward_button.clicked()
@@ -131,7 +132,7 @@ class AuthWizard(object):
 	def do_done(self):
 		self.clear_context()
 		self.set_image(gtk.STOCK_DIALOG_INFO)
-		self.add_context_text('User data has been retrieved successfully.\nPress Finish to exit the wizard.')
+		self.add_context_text('User data has been retrieved successfully.\nPress Finish and restart lastAgent.')
 		self.quit_button.set_label('_Finish')
 		self.quit_button.set_image(gtk.image_new_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON))
 		self.quit_button.grab_focus()
@@ -139,6 +140,7 @@ class AuthWizard(object):
 		self.proceed_off()
 	
 	def show(self):
+		#dialog
 		self.dialog = gtk.Dialog('Authentication Wizard', None, gtk.DIALOG_DESTROY_WITH_PARENT)
 		self.dialog.set_border_width(10)
 		self.dialog.resize(450, 250)
@@ -158,6 +160,7 @@ class AuthWizard(object):
 		#quit_button
 		self.quit_button = gtk.Button('quit', gtk.STOCK_QUIT)
 		self.dialog.action_area.pack_start(self.quit_button)
+		self.quit_button.connect('clicked', self.on_quit_button_clicked)
 		self.quit_button.show()
 		
 		#containers
@@ -182,6 +185,11 @@ class AuthWizard(object):
 	
 	def on_redo_button_clicked(self, button):
 		self.execute_same()
+	
+	def on_quit_button_clicked(self, button):
+		self.dialog.destroy()
+		gtk.main_quit()
+		quit()
 	
 	def on_open_in_browser_clicked(self, button):
 		webbrowser.open(self.auth_url)

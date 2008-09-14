@@ -1,6 +1,6 @@
 import os
 
-class Configs(object):
+class INI(object):
 	"""An interface to INI files"""
 	
 	def __init__(self, file_path, default_section = "Main"):

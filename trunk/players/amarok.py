@@ -1,15 +1,19 @@
 
 import pydcop
+import os
 
-import player
-
-class Amarok(player.Player):
+class Amarok():
 	
 	def __init__(self):
-		self.amarok = pydcop.DCOPApplication('amarok')
+		self.isRunning()
 	
 	def isRunning(self):
-		return "amarok" in pydcop.apps()
+		if os.popen('pidof amarokapp').read().strip():
+			self.amarok = pydcop.DCOPApplication('amarok')
+			return True
+		else:
+			self.amarok = None
+			return False
 
 	def isPlaying(self):
 		return self.amarok.player.isPlaying()

@@ -58,6 +58,9 @@ class TagDialog(gtk.Dialog):
 		self.list.add_entry.grab_focus()
 	
 	def get_tags(self):
+		
+		out = None
+		
 		if self.run() == gtk.RESPONSE_OK:
 			tags = self.list.get_list()
 			if len(tags) > 0:
@@ -65,8 +68,6 @@ class TagDialog(gtk.Dialog):
 				for tag in tags:
 					tag_names.append(tag.strip())
 				out = tag_names
-		else:
-			out = None
 		
 		self.destroy()
 		return out

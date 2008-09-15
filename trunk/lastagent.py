@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 
 import application
+import sys
 
-a = Application()
-a.run()
+hidden = False
+if '--hidden' in sys.argv:
+	hidden = True
+
+a = application.Application()
+a.run(hidden)
+

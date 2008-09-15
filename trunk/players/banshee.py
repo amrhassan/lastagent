@@ -5,13 +5,17 @@ import os
 class Banshee():
 	
 	def __init__(self):
+		
+		self.banshee = None
+		
 		self.bus = dbus.SessionBus()
 		
 		self.isRunning()	#to set self.banshee
 	
 	def isRunning(self):
 		if os.popen('pidof banshee-1').read().strip():		
-			self.banshee = self.bus.get_object("org.bansheeproject.Banshee", "/org/bansheeproject/Banshee/PlayerEngine")
+			if not self.banshee:
+				self.banshee = self.bus.get_object("org.bansheeproject.Banshee", "/org/bansheeproject/Banshee/PlayerEngine")
 			return True
 		else:
 			self.banshee = None

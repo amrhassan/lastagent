@@ -5,11 +5,15 @@ import os
 class Amarok():
 	
 	def __init__(self):
+		
+		self.amarok = None
+		
 		self.isRunning()
 	
 	def isRunning(self):
 		if os.popen('pidof amarokapp').read().strip():
-			self.amarok = pydcop.DCOPApplication('amarok')
+			if not self.amarok:
+				self.amarok = pydcop.DCOPApplication('amarok')
 			return True
 		else:
 			self.amarok = None

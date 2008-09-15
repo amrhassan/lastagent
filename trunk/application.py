@@ -13,11 +13,11 @@ class Application(object):
 	
 	def __init__(self):
 		
-		self.version = '0.10'
+		self.version = '0.1.0'
 		self.name = 'Last Agent'
 		self.author = 'Amr Hassan'
 		self.comment = 'A Last.fm music tracker for Linux'
-		self.pixbuf_icon = gtk.gdk.pixbuf_new_from_file('gui/images/app_red.ico')
+		self.pixbuf_icon = gtk.gdk.pixbuf_new_from_file('gui/images/app.png')
 		
 		self.config_dir = os.path.expanduser('~/.lastagent/')
 		self.cache_dir = os.path.join('/', self.config_dir, 'cache')
@@ -28,7 +28,7 @@ class Application(object):
 		self.settings = ini.INI(os.path.join('/', self.config_dir, 'settings.config'))
 
 	
-	def run(self):
+	def run(self, hidden = False):
 		
 		if not self.settings.get('session_key', None, 'user'):
 			wiz = gui.auth_wizard.AuthWizard(API_KEY, API_SECRET, self.settings)
@@ -38,10 +38,10 @@ class Application(object):
 			self.current_user = pylast.User(self.settings.get('name', '', 'user'), *self.auth_data)
 			
 			main = gui.main_window.MainWindow(self)
+			
+			#TODO: try to make use of HIDDEN
+			
 			main.show()
 		
 		gtk.gdk.threads_init() 
 		gtk.main()
-
-a = Application()
-a.run()

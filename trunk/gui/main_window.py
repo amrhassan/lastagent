@@ -22,6 +22,9 @@ class MainWindow(gtk.Window):
 		gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
 		
 		self.shown_track = None
+		self.shown_artist = None
+		self.shown_album = None
+		
 		self.app = application
 		
 		self.hidden = False
@@ -43,6 +46,7 @@ class MainWindow(gtk.Window):
 		self.art_box = gtk.VBox()
 		self.track_box = gtk.VBox()
 		self.title_label = TitleLabel()
+		self.title_box = gtk.HBox()
 		self.artist_label = ArtistLabel()
 		self.artist_box = gtk.HBox()
 		self.by_label = gtk.Label()
@@ -61,11 +65,17 @@ class MainWindow(gtk.Window):
 		self.status_bar = gtk.Statusbar()
 		self.status_icon = gtk.StatusIcon()
 		self.album_label = AlbumLabel()
+		self.album_box = gtk.HBox()
 		self.quit_action = gtk.Action('quit', '_Quit', 'Exit', gtk.STOCK_QUIT)
 		self.about_action = gtk.Action('about', '_About', 'About', gtk.STOCK_ABOUT)
-		self.love_action = gtk.Action('love', '_Love', 'Love the currently playing track', STOCK_LOVE)
-		self.tag_action = gtk.Action('tag', '_Tag', 'Tag the currently playing track', STOCK_TAG)
-		self.share_action = gtk.Action('share', '_Share', 'Share the currently playing track', STOCK_SHARE)
+		self.love_track_action = gtk.Action('love-track', '_Love', 'Love the currently playing track', STOCK_LOVE)
+		self.tag_track_action = gtk.Action('tag-track', '_Tag', 'Tag the currently playing track', STOCK_TAG)
+		self.share_track_action = gtk.Action('share-track', '_Share', 'Share the currently playing track', STOCK_SHARE)
+		self.tag_artist_action = gtk.Action('tag-artist', '_Tag', 'Tag the artist', STOCK_TAG)
+		self.share_artist_action = gtk.Action('share-artist', '_Share', 'Share the artist', STOCK_SHARE)
+		self.tag_album_action = gtk.Action('tag-album', '_Tag', 'Tag the album', STOCK_TAG)
+		self.share_album_action = gtk.Action('share-album', '_Share', 'Share an album', STOCK_SHARE)
+		
 		
 		#self
 		self.resize(350, 100)
@@ -108,11 +118,20 @@ class MainWindow(gtk.Window):
 		self.art.show()
 		
 		#artist_label
+		self.artist_label.set_tag_action(self.tag_artist_action)
+		self.artist_label.set_share_action(self.share_artist_action)
 		self.artist_label.show()
+		
+		#title_box
+		self.title_box.pack_start(self.title_label, False, False)
+		self.title_box.show()
 		
 		#title_label
 		self.title_label.show()
 		self.title_label.set_alignment(0, 0.5)
+		self.title_label.set_love_action(self.love_track_action)
+		self.title_label.set_tag_action(self.tag_track_action)
+		self.title_label.set_share_action(self.share_track_action)
 		
 		#by_label
 		self.by_label.set_text('by ')
@@ -124,9 +143,9 @@ class MainWindow(gtk.Window):
 		self.artist_box.show()
 		
 		#track_box
-		self.track_box.pack_start(self.title_label, False, False)
+		self.track_box.pack_start(self.title_box, False, False)
 		self.track_box.pack_start(self.artist_box, False, False)
-		self.track_box.pack_start(self.album_label, False, False)
+		self.track_box.pack_start(self.album_box, False, False)
 		self.track_box.show()
 		
 		#not_playing_label
@@ -153,21 +172,21 @@ class MainWindow(gtk.Window):
 		self.tag_button.set_label('_Tag')
 		self.tag_button.set_image(self.tag_image)
 		self.tag_button.set_size_request(75, -1)
-		self.tag_button.connect_object('clicked', gtk.Action.activate, self.tag_action)
+		self.tag_button.connect_object('clicked', gtk.Action.activate, self.tag_track_action)
 		self.tag_button.show()
 		
 		#share_button
 		self.share_button.set_label('_Share')
 		self.share_button.set_image(self.share_image)
 		self.share_button.set_size_request(75, -1)
-		self.share_button.connect_object('clicked', gtk.Action.activate, self.share_action)
+		self.share_button.connect_object('clicked', gtk.Action.activate, self.share_track_action)
 		self.share_button.show()
 		
 		#love_button
 		self.love_button.set_label("_Love")
 		self.love_button.set_image(self.love_image)
 		self.love_button.set_size_request(75, -1)
-		self.love_button.connect_object('clicked', gtk.Action.activate, self.love_action)
+		self.love_button.connect_object('clicked', gtk.Action.activate, self.love_track_action)
 		self.love_button.show()
 		
 		#track_buttons_box
@@ -176,8 +195,14 @@ class MainWindow(gtk.Window):
 		self.track_buttons_box.pack_end(self.love_button, False, False, 2)
 		self.track_buttons_box.show()
 		
+		#album_box
+		self.album_box.pack_start(self.album_label, False, False)
+		self.album_box.show()
+		
 		#album_label
 		self.album_label.set_alignment(0, 0.5)
+		self.album_label.set_tag_action(self.tag_album_action)
+		self.album_label.set_share_action(self.share_album_action)
 		
 		#track_pane_box
 		self.track_pane_box.pack_start(self.track_box, False, False)
@@ -191,14 +216,26 @@ class MainWindow(gtk.Window):
 		#about_action
 		self.about_action.connect('activate', self.on_about_action_activate)
 		
-		#love_action
-		self.love_action.connect('activate', self.on_love_action_activate)
+		#love_track_action
+		self.love_track_action.connect('activate', self.on_love_track_action_activate)
 		
-		#tag_action
-		self.tag_action.connect('activate', self.on_tag_action_activate)
+		#tag_track_action
+		self.tag_track_action.connect('activate', self.on_tag_track_action_activate)
 		
-		#share_action
-		self.share_action.connect('activate', self.on_share_action_activate)
+		#share_track_action
+		self.share_track_action.connect('activate', self.on_share_track_action_activate)
+		
+		#tag_artist_action
+		self.tag_artist_action.connect('activate', self.on_tag_artist_action_activate)
+		
+		#share_artist_action
+		self.share_artist_action.connect('activate', self.on_share_artist_action_activate)
+		
+		#tag_album_action
+		self.tag_album_action.connect('activate', self.on_tag_album_action_activate)
+		
+		#share_album_action
+		self.share_album_action.connect('activate', self.on_share_album_action_activate)
 		
 	
 	def _create_tray_menu(self):
@@ -211,27 +248,44 @@ class MainWindow(gtk.Window):
 			track_item.show()
 			menu.append(track_item)
 			
-			submenu = menu
-			submenu.append(self.love_action.create_menu_item())
-			submenu.append(self.tag_action.create_menu_item())
-			submenu.append(self.share_action.create_menu_item())
-			
-			#submenu.show()
-			
-			#track_item.set_submenu(submenu)
+			menu.append(self.love_track_action.create_menu_item())
+			menu.append(self.tag_track_action.create_menu_item())
+			menu.append(self.share_track_action.create_menu_item())
 			
 			track_item.connect('button-press-event', self.on_track_menuitem_pressed)
 			
-			sep = gtk.SeparatorMenuItem()
-			sep.show()
+			menu.append(gtk.SeparatorMenuItem())
 			
-			menu.append(sep)
-		
+			artist_menu = gtk.Menu()
+			artist_menu.append(self.tag_artist_action.create_menu_item())
+			artist_menu.append(self.share_artist_action.create_menu_item())
+			
+			artist_item = gtk.ImageMenuItem('A_rtist')
+			artist_item.set_image(gtk.image_new_from_stock(STOCK_ARTIST, gtk.ICON_SIZE_MENU))
+			artist_item.set_submenu(artist_menu)
+			menu.append(artist_item)
+			
+			if self.shown_album:
+				#menu.append(gtk.SeparatorMenuItem())
+				
+				album_item = gtk.ImageMenuItem('A_lbum')
+				album_item.set_image(gtk.image_new_from_stock(STOCK_ALBUM, gtk.ICON_SIZE_MENU))
+				
+				album_menu = gtk.Menu()
+				album_menu.append(self.tag_album_action.create_menu_item())
+				album_menu.append(self.share_album_action.create_menu_item())
+				
+				album_item.set_submenu(album_menu)
+				
+				menu.append(album_item)
+				
+			menu.append(gtk.SeparatorMenuItem())
+			
 		menu.append(self.about_action.create_menu_item())
 		menu.append(self.quit_action.create_menu_item())
 		
 		#menu.set_border_width(3)
-		menu.show()
+		menu.show_all()
 		
 		return menu
 	
@@ -260,7 +314,7 @@ class MainWindow(gtk.Window):
 	
 	def set_art(self, image_filepath = None):
 		if not image_filepath:
-			image_filepath = 'gui/images/no_cover.png'
+			image_filepath = 'gui/images/album.png'
 		
 		image_pixbuf = self.art_store.get_image(image_filepath, 174)
 		
@@ -278,6 +332,8 @@ class MainWindow(gtk.Window):
 		if not track:
 			self.show_not_playing()
 			self.shown_track = None
+			self.shown_album = None
+			self.shown_artist = None
 			return
 		
 		if self.shown_track and track._hash() == self.shown_track._hash():
@@ -294,6 +350,8 @@ class MainWindow(gtk.Window):
 		track.start()
 		
 		self.shown_track = track
+		self.shown_artist = track.getArtist()
+		self.shown_album = None
 		self.status_icon.set_tooltip(track.toStr())
 	
 	def restart_timer(self):
@@ -309,7 +367,8 @@ class MainWindow(gtk.Window):
 		#show album
 		if sender.getAlbum().getTitle():
 			self.album_label.show()
-			self.album_label.set_album(sender.getAlbum())
+			self.shown_album = sender.getAlbum()
+			self.album_label.set_album(self.shown_album)
 		
 		#get cached image
 		cacher = Cacher(self.app.cache_dir)
@@ -332,13 +391,13 @@ class MainWindow(gtk.Window):
 			self.set_status(sender.toStr() + ' was loved successfully.')
 			self.set_ready_status_in(3.0)
 	
-	def on_love_action_activate(self, sender):
+	def on_love_track_action_activate(self, sender):
 		self.set_status('Loving ' + self.shown_track.toStr() + '...')
 		
 		self.shown_track.async_call(self.love_callback, self.shown_track.love)
 		self.shown_track.start()
 	
-	def on_share_action_activate(self, sender):
+	def on_share_track_action_activate(self, sender):
 		
 		self.share(self.shown_track)
 	
@@ -369,10 +428,23 @@ class MainWindow(gtk.Window):
 			self.set_status(sender.toStr() + ' was shared successfully.')
 			self.set_ready_status_in(3.0)
 	
-	def on_tag_action_activate(self, sender):
+	def on_tag_track_action_activate(self, sender):
 		
 		self.tag(self.shown_track)
-
+	
+	def on_tag_artist_action_activate(self, sender):
+		self.tag(self.shown_track.getArtist())
+	
+	def on_share_artist_action_activate(self, sender):
+		self.share(self.shown_track.getArtist())
+	
+	def on_tag_album_action_activate(self, sender):
+		if self.shown_album:
+			self.tag(self.shown_album)
+	
+	def on_share_album_action_activate(self, sender):
+		if self.shown_album:
+			self.share(self.shown_album)
 	
 	def tag(self, target):
 		#target is Track, Artist or Album

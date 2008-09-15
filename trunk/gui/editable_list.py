@@ -14,6 +14,15 @@ class EditableList(gtk.VBox):
 	def set_items_stock_id(self, stock_id):
 		self.treeview_pixbufrenderer.set_property('stock-id', stock_id)
 	
+	def _match_func(self, completion, key, iter, column):
+		model = completion.get_model()
+		text = model.get_value(iter, column)
+		
+		if text.lower().startswith(key.lower()):
+			return True
+		return False
+
+	
 	def setup(self):
 		#declarations
 		self.description_label = gtk.Label()
@@ -42,6 +51,7 @@ class EditableList(gtk.VBox):
 		self.completion.set_text_column(0)
 		self.completion.set_inline_completion(True)
 		##self.completion.set_popup_completion(False)
+		self.completion.set_match_func(self._match_func, 0)
 		
 		#self
 		self.pack_start(self.description_label, False, False)

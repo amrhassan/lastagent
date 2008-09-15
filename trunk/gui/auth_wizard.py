@@ -8,12 +8,12 @@ import os
 
 class AuthWizard(object):
 	
-	def __init__(self, api_key, secret, settings):
+	def __init__(self, api_key, secret, app):
 		
 		self.api_key = api_key
 		self.secret = secret
 		
-		self.settings = settings
+		self.app = app
 		
 		self.order = (self.do_intro, self.do_token, self.do_auth, self.do_retrieve, self.do_done)
 		self.order_index = -1
@@ -89,7 +89,7 @@ class AuthWizard(object):
 	def do_auth(self):
 		self.set_image(gtk.STOCK_DIALOG_AUTHENTICATION)
 		self.clear_context()
-		self.add_context_text("Please open the following URL in your web browser and complete the authentication process by giving lastAgent the permission to submit changes to your profile.\nHaving done that, kindly press Forward.")
+		self.add_context_text("Please open the following URL in your web browser and complete the authentication process by giving %s the permission to submit changes to your profile.\nHaving done that, kindly press Forward.")
 		e = gtk.Entry()
 		url = pylast.SessionGenerator(self.api_key, self.secret).getAuthURL(self.token)
 		self.auth_url = url
@@ -122,9 +122,9 @@ class AuthWizard(object):
 			self.order_index -= 1
 			self.show_error(sender.last_error())
 		else:
-			self.settings.set('name', output['name'], 'user')
-			self.settings.set('subscriber', str(output['subscriber']), 'user')
-			self.settings.set('session_key', output['key'], 'user')
+			self.app.settings.set('name', output['name'], 'user')
+			self.app.settings.set('subscriber', str(output['subscriber']), 'user')
+			self.app.settings.set('session_key', output['key'], 'user')
 			
 			self.proceed_on()
 			self.forward_button.clicked()
@@ -132,7 +132,7 @@ class AuthWizard(object):
 	def do_done(self):
 		self.clear_context()
 		self.set_image(gtk.STOCK_DIALOG_INFO)
-		self.add_context_text('User data has been retrieved successfully.\nPress Finish and restart lastAgent.')
+		self.add_context_text('User data has been retrieved successfully.\nPress Finish and restart %s.' % self.app.name)
 		self.quit_button.set_label('_Finish')
 		self.quit_button.set_image(gtk.image_new_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON))
 		self.quit_button.grab_focus()

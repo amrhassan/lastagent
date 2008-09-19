@@ -6,7 +6,7 @@ NAME = 'lastagent'
 VERSION = '0.1.0'
 DESCRIPTION = 'A Last.fm music tracker for Linux'
 LICENSE = 'gpl'
-DEPENDS = 'python, pylast'
+DEPENDS = 'python, python-dbus, python-gtk'
 SECTION = 'python'
 URL = 'http://lastagent.tuxfamily.org'
 AUTHOR = 'Amr Hassan'
@@ -42,7 +42,7 @@ add_dir('.')
 
 app['/usr/bin'] = ['./lastagent']
 app['/usr/share/applications'] = ['./lastagent.desktop']
-app['/usr/lib/python2.5/site-packages'] = ['/usr/lib/python2.5/site-packages/pylast.py']
+app['/usr/lib/python2.5/site-packages'] = ['/media/Infernos/Projikts/Python/pylast/trunk/pylast.py']
 
 for path in files.keys():
 	app[path] = files[path]

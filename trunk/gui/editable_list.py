@@ -1,10 +1,13 @@
 import gtk
 import gobject
 import sexy
+import re
 
 class EditableList(gtk.VBox):
 	def __init__(self):
 		gtk.VBox.__init__(self)
+		
+		self.filter_add_entry = False
 		
 		self.setup()
 	
@@ -21,7 +24,6 @@ class EditableList(gtk.VBox):
 		if text.lower().startswith(key.lower()):
 			return True
 		return False
-
 	
 	def setup(self):
 		#declarations
@@ -38,6 +40,7 @@ class EditableList(gtk.VBox):
 		self.treeview_scrolled = gtk.ScrolledWindow()
 		self.remove_box = gtk.HBox()
 		self.remove_button = gtk.Button()
+		self.instruction_label = gtk.Label()
 		
 		#add_entry
 		self.add_entry.set_completion(self.completion)
@@ -45,6 +48,7 @@ class EditableList(gtk.VBox):
 		self.add_entry.connect('activate', self._on_add_entry_activate)
 		self.add_entry.set_icon(1, gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU))
 		self.add_entry.connect('icon-released', self._on_add_icon_clicked)
+		self.add_entry.connect('insert-text', self._on_add_entry_insert)
 		
 		#completion
 		self.completion.set_model(self.completion_model)
@@ -68,6 +72,7 @@ class EditableList(gtk.VBox):
 		
 		#description_label
 		self.description_label.set_alignment(0, 0.5)
+		self.description_label.set_line_wrap(True)
 		
 		#treeview
 		self.treeview.set_model(self.treeview_model)
@@ -88,6 +93,31 @@ class EditableList(gtk.VBox):
 		self.remove_button.connect('clicked', self._on_remove_button_clicked)
 		
 		self.show_all()
+	
+	def _on_add_entry_insert(self, entry, new, new_text_length, position):
+		
+		if not self.filter_add_entry:
+			return
+		
+		accept = False
+		
+		if re.match(self.entry_char_pattern, new):
+			accept = True
+		
+		if new in self.entry_char_list:
+			accept = True
+		
+		if not accept:
+			entry.stop_emission('insert-text')
+	
+	def set_entry_max_length(self, max_length):
+		self.add_entry.set_max_length(max_length)
+	
+	def set_entry_allowed_chars(self, pattern, extra_list):
+		self.entry_char_pattern = pattern
+		self.entry_char_list = extra_list
+		
+		self.filter_add_entry = True
 
 	def add_completion_string(self, string):
 		self.completion_model.append((string,))	

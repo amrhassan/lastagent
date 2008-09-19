@@ -1,4 +1,5 @@
 
+import os
 import gtk
 
 MAX_ART_AGE = 20	#after nth step, the objects get released for garbage collecting.
@@ -13,7 +14,15 @@ class ImageStore(object):
 		"""Returns a scaled pixbuf from a local cache."""
 		
 		if not file_name in self.images.keys():
-			self.images[file_name] = gtk.image_new_from_file(file_name)
+			image = gtk.image_new_from_file(file_name)
+			
+			#a work around to delete the corrupted images
+			try:
+				buf = image.get_pixbuf()
+			except:
+				os.remove(file_name)
+			
+			self.images[file_name] = image
 			self.cache[file_name] = {}
 			self.stats[file_name] = 0
 		

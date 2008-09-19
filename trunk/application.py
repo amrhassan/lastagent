@@ -18,6 +18,7 @@ class Application(object):
 		self.author = 'Amr Hassan'
 		self.comment = 'A Last.fm music tracker for Linux'
 		self.pixbuf_icon = gtk.gdk.pixbuf_new_from_file('gui/images/app.png')
+		self.waiting_animation = gtk.gdk.PixbufAnimation('gui/images/waiting1.gif')
 		
 		self.config_dir = os.path.expanduser('~/.lastagent/')
 		self.cache_dir = os.path.join('/', self.config_dir, 'cache')

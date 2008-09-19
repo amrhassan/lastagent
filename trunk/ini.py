@@ -9,8 +9,8 @@ class INI(object):
 		self._load()
 		self.__defaultSection = default_section
 	
-	def set(self, name, value, section = -1, dump = True):
-		if section == -1:
+	def set(self, name, value, section = None, dump = True):
+		if not section:
 			section = self.__defaultSection
 		
 		if not section in self.__root:
@@ -20,14 +20,12 @@ class INI(object):
 		if dump:
 			self._dump()
 	
-	def get(self, name, default_value, section = -1):
-		if section == -1:
+	def get(self, name, default_value, section = None):
+		if not section:
 			section = self.__defaultSection
 		
-		if not section in self.__root:
-			return default_value
-		if not name in self.__root[section]:
-			return default_value
+		if not section in self.__root or not name in self.__root[section]:
+			self.set(name, default_value, section)
 		
 		return self.__root[section][name]
 	
@@ -38,6 +36,8 @@ class INI(object):
 			f.write("[" + section_name + "]" + os.linesep)
 			for value_name in self.__root[section_name].keys():
 				f.write(value_name + "=" + self.__root[section_name][value_name] + os.linesep)
+			
+			f.write('\n')
 		
 		f.close()
 	
@@ -49,6 +49,9 @@ class INI(object):
 		
 		last_section = ""
 		for line in f:
+			if line.strip() == '':
+				continue
+				
 			if line.startswith("["):
 				line = line.replace("[", "").replace("]", "")
 				last_section = line.strip()

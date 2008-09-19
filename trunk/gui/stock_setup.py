@@ -8,6 +8,7 @@ STOCK_SITE = 'lastagent-site-icon'
 STOCK_ARTIST = 'lastagent-artist-icon'
 STOCK_ALBUM = 'lastagent-album-icon'
 STOCK_USER = 'lastagent-user-icon'
+STOCK_PLAYLIST = 'lastagent-playlist-icon'
 
 def get_factory():
 	
@@ -19,7 +20,8 @@ def get_factory():
 		(STOCK_SITE, 'gui/images/site.ico'),
 		(STOCK_ALBUM, 'gui/images/album.png'),
 		(STOCK_USER, 'gui/images/user.png'),
-		(STOCK_ARTIST, 'gui/images/artist.png')
+		(STOCK_ARTIST, 'gui/images/artist.png'),
+		(STOCK_PLAYLIST, 'gui/images/playlist.png')
 		]
 	
 	factory = gtk.IconFactory()

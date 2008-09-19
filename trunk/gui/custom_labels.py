@@ -15,6 +15,7 @@ class LinkLabel(gtk.EventBox):
 		self.love_action = None
 		self.tag_action = None
 		self.share_action = None
+		self.add_action = None
 		
 		self.open_url_action = gtk.Action('open-url', 'Go to _Last.fm page', '', STOCK_SITE)
 		
@@ -76,6 +77,9 @@ class LinkLabel(gtk.EventBox):
 	def set_tag_action(self, action):
 		self.tag_action = action
 	
+	def set_add_action(self, action):
+		self.add_action = action
+	
 	def set_share_action(self, action):
 		self.share_action = action
 	
@@ -89,6 +93,9 @@ class LinkLabel(gtk.EventBox):
 			more_than_web = True
 		if self.tag_action:
 			menu.append(self.tag_action.create_menu_item())
+			more_than_web = True
+		if self.add_action:
+			menu.append(self.add_action.create_menu_item())
 			more_than_web = True
 		if self.share_action:
 			menu.append(self.share_action.create_menu_item())
@@ -126,5 +133,5 @@ class ArtistLabel(LinkLabel):
 		LinkLabel.__init__(self)
 	
 	def set_artist(self, artist):
-		self.set_text(artist.toStr())
+		self.set_text('<b>' + artist.toStr() + '</b>')
 		self.set_url(artist.getURL())

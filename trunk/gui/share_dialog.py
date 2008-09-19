@@ -4,12 +4,13 @@ from cacher import Cacher
 import pylast
 from editable_list import EditableList
 from stock_setup import *
+from custom_widgets import *
 
 
-class ShareDialog(gtk.Dialog):
+class ShareDialog(SuperDialog):
 	
 	def __init__(self, parent, app, target):
-		gtk.Dialog.__init__(self, None, parent, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT | gtk.CAN_DEFAULT)
+		SuperDialog.__init__(self, None, parent, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT | gtk.CAN_DEFAULT)
 		
 		self.app = app
 		self.target = target
@@ -19,6 +20,7 @@ class ShareDialog(gtk.Dialog):
 		user = self.app.current_user
 		user.async_call(self.on_getfriends_done, user.getFriends)
 		user.start()
+		self.show_waiting()
 	
 	def on_getfriends_done(self, sender, friends):
 		for friend in friends:
@@ -31,6 +33,7 @@ class ShareDialog(gtk.Dialog):
 		self.set_response_sensitive(gtk.RESPONSE_OK, True)
 		self.set_default_response(gtk.RESPONSE_OK)
 		self.list.add_entry.grab_focus()
+		self.show_waiting(False)
 	
 	def setup(self):
 		

@@ -4,11 +4,12 @@ from cacher import Cacher
 import pylast
 from editable_list import EditableList
 from stock_setup import *
+from custom_widgets import *
 
-class TagDialog(gtk.Dialog):
+class TagDialog(SuperDialog):
 	
 	def __init__(self, parent, app, target):
-		gtk.Dialog.__init__(self, None, parent, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT | gtk.CAN_DEFAULT)
+		SuperDialog.__init__(self, None, parent, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT | gtk.CAN_DEFAULT)
 		
 		self.app = app
 		self.target = target
@@ -19,6 +20,7 @@ class TagDialog(gtk.Dialog):
 		self.target.async_call(self.on_gettoptags_done, self.app.current_user.getTopTags)
 		self.target.async_call(self.on_gettags_done, self.target.getTags)
 		self.target.start()
+		self.show_waiting()
 
 	
 	def setup(self):
@@ -33,15 +35,19 @@ class TagDialog(gtk.Dialog):
 		self.set_border_width(10)
 		self.vbox.pack_start(self.list, True, True, 5)
 		self.resize(400, 300)
+		self.action_area.show_all()
 		self.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
 		self.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
 		self.set_default_response(gtk.RESPONSE_OK)
 		self.set_response_sensitive(gtk.RESPONSE_OK, False)
 		
+		
 		#list
 		self.list.set_description('Tagging: ' + self.target.toStr())
 		self.list.set_sensitive(False)
 		self.list.set_items_stock_id(STOCK_TAG)
+		self.list.set_entry_max_length(256)
+		self.list.set_entry_allowed_chars('[a-zA-Z0-9]', (':', '-', ' '))
 	
 	def on_gettags_done(self, sender, tags):
 		
@@ -56,6 +62,8 @@ class TagDialog(gtk.Dialog):
 		
 		self.set_response_sensitive(gtk.RESPONSE_OK, True)
 		self.list.add_entry.grab_focus()
+		
+		self.show_waiting(False)
 	
 	def get_tags(self):
 		
@@ -63,11 +71,10 @@ class TagDialog(gtk.Dialog):
 		
 		if self.run() == gtk.RESPONSE_OK:
 			tags = self.list.get_list()
-			if len(tags) > 0:
-				tag_names = []
-				for tag in tags:
-					tag_names.append(tag.strip())
-				out = tag_names
+			tag_names = []
+			for tag in tags:
+				tag_names.append(tag.strip())
+			out = tag_names
 		
 		self.destroy()
 		return out

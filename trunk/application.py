@@ -29,7 +29,7 @@ class Application(object):
 		self.settings = ini.INI(os.path.join('/', self.config_dir, 'settings.config'))
 
 	
-	def run(self, hidden = False):
+	def run(self):
 		
 		if not self.settings.get('session_key', None, 'user'):
 			wiz = gui.auth_wizard.AuthWizard(API_KEY, API_SECRET, self.settings)
@@ -40,9 +40,7 @@ class Application(object):
 			
 			main = gui.main_window.MainWindow(self)
 			
-			#TODO: try to make use of HIDDEN
-			
-			main.show()
+			main.fire_up()
 		
 		gtk.gdk.threads_init() 
 		gtk.main()

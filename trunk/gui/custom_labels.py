@@ -17,7 +17,7 @@ class LinkLabel(gtk.EventBox):
 		self.share_action = None
 		self.add_action = None
 		
-		self.open_url_action = gtk.Action('open-url', 'Go to _Last.fm page', '', STOCK_SITE)
+		self.open_url_action = gtk.Action('open-url', 'Go to _Last.fm page', '', STOCK_NETWORK)
 		
 		self.connect('button-press-event', self.on_clicked)
 		self.connect('enter-notify-event', self.on_mouse_enter)

@@ -1,38 +1,32 @@
 
-import pydcop
+import dbus
 import os
 
 def shell(command):
 	return os.popen(command).read().strip()
 
-class Amarok():
+class Audacious():
 	
 	def __init__(self):
-		
-		self.amarok = None
-		
-		self.isRunning()
+		pass
 	
 	def isRunning(self):
-		if shell('pidof amarokapp'):
-			if not self.amarok:
-				self.amarok = pydcop.DCOPApplication('amarok')
+		if shell('pidof audacious'):
 			return True
 		else:
-			self.amarok = None
 			return False
 
 	def isPlaying(self):
-		return self.amarok.player.isPlaying()
+		return shell('audtool playback-status') == 'playing'
 	
 	def getArtist(self):
 		if self.isRunning() and self.isPlaying():
-			return self.amarok.player.artist()
+			return unicode(shell('audtool current-song').split('-')[0].strip())
 		else:
 			return None
 	
 	def getTitle(self):
 		if self.isRunning() and self.isPlaying():
-			return self.amarok.player.title()
+			return unicode(shell('audtool current-song').split('-')[1].strip())
 		else:
 			return None

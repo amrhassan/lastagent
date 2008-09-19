@@ -14,7 +14,7 @@ class AboutApp(gtk.AboutDialog):
 		self.set_comments(app.comment)
 		self.set_license(open('LICENSE').read())
 		self.set_wrap_license(True)
-		self.set_website('http://lastagent.tuxfamily.org')
+		self.set_website('http://lastagent.googlecode.com/')
 		self.set_authors(('* Amr Hassan (amr.hassan@gmail.com)',))
 		self.set_artists(('* http://www.gorvan.com (Application icon taken from the "Last.fm icons 2" set)', '', '* Last.fm web site and official client icon designers (The rest of the icons)'))
 		self.set_logo(app.pixbuf_icon)

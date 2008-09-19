@@ -5,6 +5,7 @@ import pylast
 from pylast import Track
 from cacher import Cacher
 import os
+import sys
 import players.current
 import threading
 from share_dialog import ShareDialog
@@ -166,7 +167,7 @@ class MainWindow(gtk.Window):
 		self.not_playing_label.set_sensitive(False)
 		
 		#status_bar
-		self.status_bar.set_default_icon_from_stock(STOCK_SITE)
+		self.status_bar.set_default_icon_from_stock(STOCK_NETWORK)
 		self.status_bar.set_default_status('Ready.')
 		self.status_bar.reset_to_default(0)
 		self.status_bar.show_all()
@@ -350,10 +351,12 @@ class MainWindow(gtk.Window):
 			self.track_buttons_box.set_sensitive(False)
 			self.album_label.hide()
 			self.status_icon.set_tooltip(self.get_title())
+			self.status_bar.set_icon_from_stock(STOCK_IDLE_NETWORK)
 		else:
 			self.not_playing_label.hide()
 			self.track_box.show()
 			self.track_buttons_box.set_sensitive(True)
+			self.status_bar.set_icon_from_stock(STOCK_NETWORK)
 		
 		self.set_art()
 	
@@ -598,3 +601,9 @@ class MainWindow(gtk.Window):
 				return
 		
 		self.set_status_success(PROCESS_ADD, sender)
+	
+	def fire_up(self):
+		self.show()
+		
+		if '--hidden' in sys.argv:
+			self.toggle_iconified()

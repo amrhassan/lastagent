@@ -42,12 +42,14 @@ add_dir('.')
 
 app['/usr/bin'] = ['./lastagent']
 app['/usr/share/applications'] = ['./lastagent.desktop']
+app['/usr/lib/python2.5/site-packages'] = ['/usr/lib/python2.5/site-packages/pylast.py']
 
 for path in files.keys():
 	app[path] = files[path]
 
 app.generate(VERSION, CHANGES, True, False)
 
-print "OK"
-
 os.system('sudo dpkg -i *.deb')
+
+os.system('mv *.deb ../package/ -f -v')
+os.system('mv *.rpm ../package/ -f -v')

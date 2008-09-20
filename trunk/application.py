@@ -50,8 +50,8 @@ class Application(object):
 	
 	def run(self):
 		
-		if not self.settings.get('session_key', None, 'user'):
-			wiz = gui.auth_wizard.AuthWizard(API_KEY, API_SECRET, self.settings)
+		if not self.settings.get('session_key', '', 'user'):
+			wiz = gui.auth_wizard.AuthWizard(API_KEY, API_SECRET, self)
 			wiz.show()
 		else:
 			self.auth_data = (API_KEY, API_SECRET, self.settings.get('session_key', None, 'user'))

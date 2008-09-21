@@ -66,7 +66,7 @@ class TagDialog(SuperDialog):
 		self.list.set_sensitive(False)
 		self.list.set_items_stock_id(STOCK_TAG)
 		self.list.set_entry_max_length(256)
-		self.list.set_entry_allowed_chars('[a-zA-Z0-9]', (':', '-', ' '))
+		self.list.set_entry_allowed_chars('[a-zA-Z0-9]', (':', '-', ' ',','))
 	
 	def on_gettags_done(self, sender, tags):
 		

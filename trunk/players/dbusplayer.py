@@ -18,25 +18,43 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA
 
-from dbusplayer import DBusPlayer
+import dbus
+import os
 
-class Banshee(DBusPlayer):
+class DBusPlayer():
 	
-	def __init__(self):
+	def __init__(self, process_name, *dbus_name_path_pairs):
 		
-		DBusPlayer.__init__(self, 'banshee-1', ('org.bansheeproject.Banshee', '/org/bansheeproject/Banshee/PlayerEngine'))
+		self.process_name = process_name
+		
+		self.bus = dbus.SessionBus()
+		self.pairs = dbus_name_path_pairs
+		self.dbus_objects = None
 	
+	def setup_objects(self):
+		self.dbus_objects = []
+		
+		for pair in self.pairs:
+			self.dbus_objects.append(self.bus.get_object(pair[0], pair[1]))
+	
+	def isRunning(self):
+		if os.popen('pidof ' + self.process_name).read().strip():		
+			if not self.dbus_objects:
+				self.setup_objects()
+			
+			return True
+		else:
+			self.player = None
+			return False
+
 	def isPlaying(self):
-		return self.dbus_objects[0].GetCurrentState() == 'playing'
+		pass
+		# should be overriden
 	
 	def getArtist(self):
-		if self.isRunning() and self.isPlaying():
-			return unicode(self.dbus_objects[0].GetCurrentTrack()['artist'])
-		else:
-			return None
+		pass
+		# should be overriden
 	
 	def getTitle(self):
-		if self.isRunning() and self.isPlaying():
-			return unicode(self.dbus_objects[0].GetCurrentTrack()['name'])
-		else:
-			return None
+		pass
+		# should be overriden

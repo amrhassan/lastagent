@@ -20,23 +20,30 @@
 
 from dbusplayer import DBusPlayer
 
-class Banshee(DBusPlayer):
+class Rhythmbox(DBusPlayer):
 	
 	def __init__(self):
 		
-		DBusPlayer.__init__(self, 'banshee-1', ('org.bansheeproject.Banshee', '/org/bansheeproject/Banshee/PlayerEngine'))
+		DBusPlayer.__init__(self, 'rhythmbox', ('org.gnome.Rhythmbox', '/org/gnome/Rhythmbox/Player'), ('org.gnome.Rhythmbox', '/org/gnome/Rhythmbox/Shell'))
+		
 	
 	def isPlaying(self):
-		return self.dbus_objects[0].GetCurrentState() == 'playing'
+		return int(self.dbus_objects[0].getPlaying()) == 1
 	
 	def getArtist(self):
 		if self.isRunning() and self.isPlaying():
-			return unicode(self.dbus_objects[0].GetCurrentTrack()['artist'])
+			uri = self.dbus_objects[0].getPlayingUri()
+			props = self.dbus_objects[1].getSongProperties(uri)
+			
+			return unicode(props['artist'])
 		else:
 			return None
 	
 	def getTitle(self):
 		if self.isRunning() and self.isPlaying():
-			return unicode(self.dbus_objects[0].GetCurrentTrack()['name'])
+			uri = self.dbus_objects[0].getPlayingUri()
+			props = self.dbus_objects[1].getSongProperties(uri)
+			
+			return unicode(props['title'])
 		else:
 			return None

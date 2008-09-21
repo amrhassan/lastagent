@@ -32,7 +32,7 @@ class Application(object):
 	
 	def __init__(self):
 		
-		self.version = '0.1.0'
+		self.version = '0.1.1'
 		self.name = 'Last Agent'
 		self.author = 'Amr Hassan'
 		self.comment = 'A Last.fm music tracker for Linux'

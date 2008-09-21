@@ -3,16 +3,16 @@ import py2deb
 from os.path import join, split
 
 NAME = 'lastagent'
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 DESCRIPTION = 'A Last.fm music tracker for Linux'
 LICENSE = 'gpl'
-DEPENDS = 'python, python-dbus, python-dcop, python-gtk2, python-sexy'
+DEPENDS = 'python, python-dbus, python-gtk2, python-sexy'
 SECTION = 'python'
 URL = 'http://lastagent.tuxfamily.org'
 AUTHOR = 'Amr Hassan'
 EMAIL = 'amr.hassan@gmail.com'
 ARCHITECTURE = 'all'
-CHANGES = ''
+CHANGES = open('CHANGES').read()
 
 app = py2deb.Py2deb(NAME, DESCRIPTION, LICENSE, DEPENDS, SECTION, ARCHITECTURE, URL, AUTHOR, EMAIL)
 

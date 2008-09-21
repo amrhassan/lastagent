@@ -21,16 +21,18 @@
 import amarok
 import banshee
 import audacious
+import rhythmbox
 
 def getRunning():
-	"""Returns an instance of Player or None."""
-	
+	"""Returns an instance of Player or None."""	
+		
 	available_players = (
-	amarok.Amarok(),
-	banshee.Banshee(),
-	audacious.Audacious()
-	)
-	
+		amarok.Amarok(),
+		banshee.Banshee(),
+		audacious.Audacious(),
+		rhythmbox.Rhythmbox()
+		)
+		
 	for player in available_players:
 		if player.isRunning() and player.isPlaying():
 			return player

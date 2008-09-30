@@ -35,8 +35,10 @@ class TagDialog(SuperDialog):
 		
 		self.setup()
 		
-		self.target.async_call(self.on_gettoptags_done, self.target.getTopTags)
-		self.target.async_call(self.on_gettoptags_done, self.app.current_user.getTopTags)
+		if self.app.settings.get_bool('autocomplete_from_track_toptags', 'tagging'):
+			self.target.async_call(self.on_gettoptags_done, self.target.getTopTags)
+		if self.app.settings.get_bool('autocomplete_from_user_toptags', 'tagging'):
+			self.target.async_call(self.on_gettoptags_done, self.app.current_user.getTopTags)
 		self.target.async_call(self.on_gettags_done, self.target.getTags)
 		self.target.start()
 		self.show_waiting()
@@ -82,7 +84,7 @@ class TagDialog(SuperDialog):
 		self.set_response_sensitive(gtk.RESPONSE_OK, True)
 		self.list.add_entry.grab_focus()
 		
-		self.show_waiting(False)
+		self.hide_waiting()
 	
 	def get_tags(self):
 		

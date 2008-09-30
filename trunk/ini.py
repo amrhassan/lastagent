@@ -23,11 +23,12 @@ import os
 class INI(object):
 	"""An interface to INI files"""
 	
-	def __init__(self, file_path, default_section = "Main"):
+	def __init__(self, file_path, get_default_func, default_section = "Main"):
 		self.path = file_path
 		self.__root = {}
 		self._load()
 		self.__defaultSection = default_section
+		self.get_default = get_default_func
 	
 	def set(self, name, value, section = None, dump = True):
 		if not section:
@@ -35,17 +36,17 @@ class INI(object):
 		
 		if not section in self.__root:
 			self.__root[section] = {}
-		self.__root[section][name] = value
+		self.__root[section][name] = str(value)
 		
 		if dump:
 			self._dump()
 	
-	def get(self, name, default_value, section = None):
+	def get(self, name, section = None):
 		if not section:
 			section = self.__defaultSection
 		
 		if not section in self.__root or not name in self.__root[section]:
-			self.set(name, default_value, section)
+			self.set(name, self.get_default(name), section)
 		
 		return self.__root[section][name]
 	
@@ -80,3 +81,17 @@ class INI(object):
 				self.set(values[0].strip(), values[1].strip(), last_section, False)
 		
 		f.close()
+	
+	def get_bool(self, name, section = None):
+		value = self.get(name, section)
+		
+		if value.lower() == 'true' or value == '1':
+			return True
+		else:
+			return False
+	
+	def get_float(self, name, section = None):
+		return float(self.get(name, section))
+	
+	def get_int(self, name, section = None):
+		return int(self.get(name, section))

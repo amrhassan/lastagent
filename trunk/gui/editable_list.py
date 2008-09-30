@@ -75,7 +75,7 @@ class EditableList(gtk.VBox):
 		self.completion.set_text_column(0)
 		self.completion.set_inline_completion(True)
 		##self.completion.set_popup_completion(False)
-		self.completion.set_match_func(self._match_func, 0)
+		#self.completion.set_match_func(self._match_func, 0)
 		
 		#self
 		self.pack_start(self.description_label, False, False)

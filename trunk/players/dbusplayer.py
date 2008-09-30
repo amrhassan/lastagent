@@ -40,11 +40,13 @@ class DBusPlayer():
 	def isRunning(self):
 		if os.popen('pidof ' + self.process_name).read().strip():		
 			if not self.dbus_objects:
-				self.setup_objects()
+				try:
+					self.setup_objects()
+				except:
+					self.dbus_objects = None
 			
 			return True
 		else:
-			self.player = None
 			return False
 
 	def isPlaying(self):

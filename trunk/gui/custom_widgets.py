@@ -35,10 +35,11 @@ class SuperDialog(gtk.Dialog):
 		self.show_waiting(False)
 	
 	def show_waiting(self, show = True):
-		if show:
-			self.waiting_image.show()
-		else:
-			self.waiting_image.hide()
+		self.waiting_image.show()
+
+	
+	def hide_waiting(self):
+		self.waiting_image.hide()
 
 class PlaylistCombo(gtk.ComboBox):
 	def __init__(self):
@@ -123,7 +124,7 @@ class StatusBar(gtk.VBox):
 	
 
 class MessageBox(gtk.Dialog):
-	def __init__(self, title, message, icon, parent = None):
+	def __init__(self, title, message, icon, parent):
 		gtk.Dialog.__init__(self, title, parent, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT | gtk.CAN_DEFAULT)
 		
 		#declarations
@@ -156,5 +157,95 @@ class MessageBox(gtk.Dialog):
 	def _on_response(self, sender, response):
 		self.destroy()
 
-#mb = MessageBox('Error', "message", gtk.STOCK_DIALOG_ERROR, None)
-#mb.run()
+class ErrorMessageBox(MessageBox):
+	def __init__(self, title, message, parent):
+		MessageBox.__init__(self, title, message, gtk.STOCK_DIALOG_ERROR, parent)
+
+class MainButton(gtk.Button):
+	def __init__(self):
+		gtk.Button.__init__(self)
+		self.normal_label = ''
+		self.smaller_tooltip = ''
+		self.make_normal()
+	
+	def set_smaller_tooltip(self, tooltip):
+		self.smaller_tooltip = tooltip
+	
+	def set_normal_label(self, label):
+		self.normal_label = label
+	
+	def make_normal(self):
+		self.set_size_request(75, -1)
+		self.set_property('has-tooltip', False)
+		self.set_label(self.normal_label)
+		self.set_relief(gtk.RELIEF_NORMAL)
+	
+	def make_smaller(self):
+		self.set_relief(gtk.RELIEF_NONE)
+		self.set_label('')
+		self.set_tooltip_text(self.smaller_tooltip)
+		self.set_size_request(-1, -1)
+
+def get_hboxed(widget, expand = True, fill = True, padding = 0):
+	box = gtk.HBox()
+	box.pack_start(widget, expand, fill, padding)
+	box.show_all()
+	
+	return box
+
+def get_vboxed(widget, expand = True, fill = True, padding = 0):
+	box = gtk.VBox()
+	box.pack_start(widget, expand, fill, padding)
+	box.show_all()
+	
+	return box
+
+class InputBox(gtk.Dialog):
+	def __init__(self, parent, title = '', message = '', default_input = ''):
+		gtk.Dialog.__init__(self, title, parent, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT)
+		
+		self.message = message
+		self.default_input = default_input
+		
+		self.setup()
+	
+	def set_message(self, message):
+		self.message = message
+		self.message_label.set_message(message)
+	
+	def setup(self):
+		#declarations
+		self.message_label = gtk.Label()
+		self.input_entry = gtk.Entry()
+		self.container = gtk.VBox()
+		
+		#message_label
+		self.message_label.set_text(self.message)
+		self.message_label.set_alignment(0, 0.5)
+		self.message_label.show()
+		
+		#input_entry
+		self.input_entry.set_text(self.default_input)
+		self.input_entry.show()
+		
+		#self
+		self.container.set_border_width(10)
+		self.resize(400, 1)
+		self.vbox.pack_start(self.container)
+		self.container.show()
+		self.container.pack_start(self.message_label, False, False)
+		self.container.pack_start(self.input_entry, False, False, 10)
+		self.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
+		self.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+		self.set_default_response(gtk.RESPONSE_OK)
+	
+	def get_input(self):
+		
+		response = self.run()
+		
+		if response == gtk.RESPONSE_OK:
+			self.destroy()
+			return self.input_entry.get_text()
+		else:
+			self.destroy()
+			return self.default_input

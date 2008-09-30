@@ -34,8 +34,8 @@ from stock_setup import *
 from about_dialog import AboutApp
 from custom_widgets import *
 from add_dialog import *
+from presets_edit_dialog import *
 
-PLAYBACK_CHECKING_INTERVAL = 2.0	#in seconds
 
 PROCESS_TAG = 0
 PROCESS_LOVE = 1
@@ -53,6 +53,9 @@ class MainWindow(gtk.Window):
 		
 		self.app = application
 		
+		self.active_preset = 'preset:' + self.app.presets.get('last_preset', 'general')
+		self.presets_dict = {}	#{preset_radio_menuitem: 'preset_name',}
+		
 		self.hidden = False
 		self.art_store = ImageStore()
 		
@@ -61,6 +64,7 @@ class MainWindow(gtk.Window):
 		self.setup()
 		
 		self.show_track()
+		
 	
 	def setup(self):
 		#declarations
@@ -76,18 +80,18 @@ class MainWindow(gtk.Window):
 		self.by_label = gtk.Label()
 		self.not_playing_label = gtk.Label()
 		self.track_pane_box = gtk.VBox()
-		self.love_button = gtk.Button()
-		self.share_button = gtk.Button()
-		self.tag_button = gtk.Button()
+		self.love_button = MainButton()
+		self.share_button = MainButton()
+		self.tag_button = MainButton()
 		self.track_buttons_box = gtk.HBox()
 		self.main_buttons_box = gtk.HBox()
 		self.love_image = gtk.Image()
 		self.share_image = gtk.Image()
 		self.tag_image = gtk.Image()
 		self.playlist_image = gtk.Image()
-		self.share_button = gtk.Button()
-		self.tag_button = gtk.Button()
-		self.playlist_add_button = gtk.Button()
+		self.share_button = MainButton()
+		self.tag_button = MainButton()
+		self.playlist_add_button = MainButton()
 		self.status_bar = StatusBar()
 		self.status_icon = gtk.StatusIcon()
 		self.album_label = AlbumLabel()
@@ -115,12 +119,6 @@ class MainWindow(gtk.Window):
 		self.connect('hide', self.on_self_hide)
 		self.set_icon(self.app.pixbuf_icon)
 		self.deletable = False
-		if self.app.settings.get('main_keep_above', '1', 'display') == '1':
-			self.set_keep_above(True)
-		if self.app.settings.get('main_skip_taskbar', '0', 'display') == '1':
-			self.set_property('skip-taskbar-hint', True)
-		if self.app.settings.get('main_resizable', '0', 'display') == '0':
-			self.set_resizable(False)
 		self.show()
 		
 		#status_icon
@@ -188,7 +186,6 @@ class MainWindow(gtk.Window):
 		self.status_bar.set_default_icon_from_stock(STOCK_NETWORK)
 		self.status_bar.set_default_status('Ready.')
 		self.status_bar.reset_to_default(0)
-		self.status_bar.show_all()
 		
 		#love_image
 		self.love_image.set_from_stock(STOCK_LOVE, gtk.ICON_SIZE_BUTTON)
@@ -207,42 +204,34 @@ class MainWindow(gtk.Window):
 		self.playlist_image.show()
 		
 		#tag_button
-		##self.tag_button.set_tooltip_text('Tag...')
-		self.tag_button.set_label('_Tag')
 		self.tag_button.set_image(self.tag_image)
-		self.tag_button.set_size_request(75, -1)
 		self.tag_button.connect_object('clicked', gtk.Action.activate, self.tag_track_action)
-		##self.tag_button.set_relief(gtk.RELIEF_NONE)
+		self.tag_button.set_normal_label('_Tag')
+		self.tag_button.set_smaller_tooltip('Tag')
 		self.tag_button.set_focus_on_click(False)
 		self.tag_button.show()
 		
 		#share_button
-		##self.share_button.set_tooltip_text('Share...')
-		self.share_button.set_label('_Share')
 		self.share_button.set_image(self.share_image)
-		self.share_button.set_size_request(75, -1)
 		self.share_button.connect_object('clicked', gtk.Action.activate, self.share_track_action)
-		##self.share_button.set_relief(gtk.RELIEF_NONE)
+		self.share_button.set_normal_label('_Share')
+		self.share_button.set_smaller_tooltip('Share')
 		self.share_button.set_focus_on_click(False)
 		self.share_button.show()
 		
 		#playlist_add_button
-		##self.playlist_add_button.set_tooltip_text('Add to a playlist...')
-		self.playlist_add_button.set_label('_Add')
 		self.playlist_add_button.set_image(self.playlist_image)
-		self.playlist_add_button.set_size_request(75, -1)
 		self.playlist_add_button.connect_object('clicked', gtk.Action.activate, self.playlist_add_action)
-		##self.playlist_add_button.set_relief(gtk.RELIEF_NONE)
+		self.playlist_add_button.set_normal_label('_Add')
+		self.playlist_add_button.set_smaller_tooltip('Add to a playlist')
 		self.playlist_add_button.set_focus_on_click(False)
 		self.playlist_add_button.show()
 		
 		#love_button
-		##self.love_button.set_tooltip_text("Love")
-		self.love_button.set_label("_Love")
 		self.love_button.set_image(self.love_image)
-		self.love_button.set_size_request(75, -1)
 		self.love_button.connect_object('clicked', gtk.Action.activate, self.love_track_action)
-		##self.love_button.set_relief(gtk.RELIEF_NONE)
+		self.love_button.set_normal_label('_Love')
+		self.love_button.set_smaller_tooltip('Love')
 		self.love_button.set_focus_on_click(False)
 		self.love_button.show()
 		
@@ -251,7 +240,6 @@ class MainWindow(gtk.Window):
 		self.track_buttons_box.pack_end(self.playlist_add_button, False, False, 2)
 		self.track_buttons_box.pack_end(self.tag_button, False, False, 2)
 		self.track_buttons_box.pack_end(self.love_button, False, False, 2)
-		self.track_buttons_box.show()
 		
 		#album_box
 		self.album_box.pack_start(self.album_label, False, False)
@@ -297,26 +285,31 @@ class MainWindow(gtk.Window):
 		
 		#playlist_add_action
 		self.playlist_add_action.connect('activate', self.on_playlist_add_action_activate)
+		
+		self.apply_configs()
 	
 	def _create_tray_menu(self):
 		menu = gtk.Menu()
 		
 		#track menu
 		if self.shown_track:
-			track_item = gtk.ImageMenuItem(self.shown_track.toStr())
+			if self.app.presets.get_bool('menu_show_track', self.active_preset):
+				track_item = gtk.ImageMenuItem(self.shown_track.toStr())
+				size = self.app.presets.get_int('menu_track_art_size', self.active_preset)
+				track_item.set_image(gtk.image_new_from_pixbuf(self.art_store.get_image(self.current_art_filename, size)))
+				track_item.connect('button-press-event', self.on_track_menuitem_pressed)
+				menu.append(track_item)	
+			else:
+				show_item = gtk.ImageMenuItem('Sh_ow')
+				show_item.connect('button-press-event', self.on_track_menuitem_pressed)
+				menu.append(show_item)
 			
-			size = int(self.app.settings.get('menu_track_art_size', '50', 'display'))
-			
-			track_item.set_image(gtk.image_new_from_pixbuf(self.art_store.get_image(self.current_art_filename, size)))
-			track_item.show()
-			menu.append(track_item)
+			menu.append(gtk.SeparatorMenuItem())
 			
 			menu.append(self.love_track_action.create_menu_item())
 			menu.append(self.tag_track_action.create_menu_item())
 			menu.append(self.playlist_add_action.create_menu_item())
 			menu.append(self.share_track_action.create_menu_item())
-			
-			track_item.connect('button-press-event', self.on_track_menuitem_pressed)
 			
 			menu.append(gtk.SeparatorMenuItem())
 			
@@ -344,14 +337,44 @@ class MainWindow(gtk.Window):
 				menu.append(album_item)
 				
 			menu.append(gtk.SeparatorMenuItem())
-			
+		
+		display_item = gtk.ImageMenuItem('Display _Presets')
+		display_item.set_image(gtk.image_new_from_stock(gtk.STOCK_PREFERENCES, gtk.ICON_SIZE_MENU))
+		submenu = gtk.Menu()
+		display_item.set_submenu(submenu)
+		
+		presets = self.app.presets.get('presets', 'general').split(';')
+		group = None
+		for preset in presets:
+			preset_item = gtk.RadioMenuItem(group, preset)
+			if preset == self.app.presets.get('last_preset', 'general'):
+				preset_item.set_active(True)
+			preset_item.connect('button-press-event', self.on_preset_changed)
+			self.presets_dict[preset_item] = preset
+			if not group:
+				group = preset_item
+			submenu.append(preset_item)
+		
+		submenu.append(gtk.SeparatorMenuItem())
+		edit_item = gtk.ImageMenuItem('_Edit')
+		edit_item.connect('button-press-event', self.on_edit_menu_clicked)
+		submenu.append(edit_item)
+		
+		menu.append(display_item)
+		menu.append(gtk.SeparatorMenuItem())
 		menu.append(self.about_action.create_menu_item())
 		menu.append(self.quit_action.create_menu_item())
 		
-		#menu.set_border_width(3)
 		menu.show_all()
 		
 		return menu
+	
+	def on_preset_changed(self, sender, event):
+		preset = self.presets_dict[sender]
+		
+		self.app.presets.set('last_preset', preset, 'general')
+		self.active_preset = 'preset:' + preset
+		self.apply_configs()
 	
 	def get_playing_track(self):
 		player = players.current.getRunning()
@@ -382,15 +405,12 @@ class MainWindow(gtk.Window):
 		if not image_filepath:
 			image_filepath = 'gui/images/album.png'
 		
-		dimension = int(self.app.settings.get('main_art_dimension', '174', 'display'))
+		dimension = self.app.presets.get_int('main_art_dimension', self.active_preset)
 		image_pixbuf = self.art_store.get_image(image_filepath, dimension)
 		
 		self.current_art_filename = image_filepath
 		
 		self.art.set_from_pixbuf(image_pixbuf)
-		
-		##width = int(self.app.settings.get('main_default_width', '500', 'display'))
-		##self.resize(width, 1)
 
 	def show_track(self):
 		
@@ -426,7 +446,9 @@ class MainWindow(gtk.Window):
 	
 	def restart_timer(self):
 		
-		self.timer = threading.Timer(PLAYBACK_CHECKING_INTERVAL, self.show_track)
+		interval = float(self.app.settings.get('updating_interval', 'tracker'))
+		
+		self.timer = threading.Timer(interval, self.show_track)
 		self.timer.start()
 	
 	def _set_art_callback(self, sender, file_path):
@@ -435,7 +457,7 @@ class MainWindow(gtk.Window):
 	def _get_image_callback(self, sender, url):
 		
 		#show album
-		if sender.getAlbum().getTitle():
+		if sender.getAlbum().getTitle() and self.app.presets.get_bool('main_show_album', self.active_preset):
 			self.album_label.show()
 			self.shown_album = sender.getAlbum()
 			self.album_label.set_album(self.shown_album)
@@ -595,6 +617,7 @@ class MainWindow(gtk.Window):
 	
 	def on_self_show(self, sender):
 		self.hidden = False
+		self.set_keep_above(self.app.presets.get_bool('main_keep_above', self.active_preset))
 	
 	def on_playlist_add_action_activate(self, sender):
 		target = self.shown_track
@@ -625,3 +648,61 @@ class MainWindow(gtk.Window):
 		
 		if '--hidden' in sys.argv:
 			self.toggle_iconified()
+	
+	def apply_configs(self):
+		
+		#self
+		self.set_opacity(self.app.presets.get_float('main_opacity', self.active_preset))
+		self.set_keep_above(self.app.presets.get_bool('main_keep_above', self.active_preset))
+		self.set_property('skip-taskbar-hint', self.app.presets.get_bool('main_skip_taskbar', self.active_preset))
+		self.set_resizable(self.app.presets.get_bool('main_resizable', self.active_preset))
+		self.set_decorated(self.app.presets.get_bool('main_decorated', self.active_preset))
+		
+		#status_bar
+		if self.app.presets.get_bool('main_show_statusbar', self.active_preset):
+			self.status_bar.show_all()
+		else:
+			self.status_bar.hide()
+		
+		#track_box_buttons
+		if self.app.presets.get_bool('main_show_buttons', self.active_preset):
+			self.track_buttons_box.show()
+		else:
+			self.track_buttons_box.hide()
+		
+		#labels
+		if self.app.presets.get_bool('main_show_artist', self.active_preset):
+			self.artist_box.show()
+		else:
+			self.artist_box.hide()
+		
+		if self.app.presets.get_bool('main_show_title', self.active_preset):
+			self.title_box.show()
+		else:
+			self.title_box.hide()
+		
+		if self.app.presets.get_bool('main_show_album', self.active_preset):
+			self.album_box.show()
+		else:
+			self.album_box.hide()
+		
+		#art
+		if self.app.presets.get_bool('main_show_art', self.active_preset):
+			self.art_box.show()
+		else:
+			self.art_box.hide()
+		
+		#buttons
+		buttons = (self.love_button, self.tag_button, self.share_button, self.playlist_add_button)
+		for button in buttons:
+			if self.app.presets.get_bool('main_smaller_buttons', self.active_preset):
+				button.make_smaller()
+			else:
+				button.make_normal()
+		
+		#to reset the art
+		self.shown_track = None
+
+	def on_edit_menu_clicked(self, sender, event):
+		d = EditPresets(self, self.app, self.apply_configs)
+		d.show()

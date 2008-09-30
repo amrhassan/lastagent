@@ -18,12 +18,17 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA
 
+import pygtk
+pygtk.require('2.0')
+
 import ini
 import os
 import gui.auth_wizard
 import gui.main_window
 import gtk
 import pylast
+import webbrowser
+import default_values
 
 API_KEY =		'ecc0d2ded1ab6c21f1c9716a47476e45'
 API_SECRET = 	'861595fdeeaf6142def95a0317482251'
@@ -32,7 +37,7 @@ class Application(object):
 	
 	def __init__(self):
 		
-		self.version = '0.1.1'
+		self.version = '0.2.0'
 		self.name = 'Last Agent'
 		self.author = 'Amr Hassan'
 		self.comment = 'A Last.fm music tracker for Linux'
@@ -45,21 +50,30 @@ class Application(object):
 		if not os.path.exists(self.config_dir):
 			os.mkdir(self.config_dir)
 		
-		self.settings = ini.INI(os.path.join('/', self.config_dir, 'settings.config'))
+		self.presets = ini.INI(os.path.join('/', self.config_dir, 'display.conf'), default_values.get_default)
+		self.user_details = ini.INI(os.path.join('/', self.config_dir, 'user.conf'), default_values.get_default)
+		self.settings = ini.INI(os.path.join('/', self.config_dir, 'settings.conf'), default_values.get_default)
+		
+		gtk.link_button_set_uri_hook(self.on_click_url, None)
 
 	
 	def run(self):
 		
-		if not self.settings.get('session_key', '', 'user'):
+		self.api_key = API_KEY
+		self.secret = API_SECRET
+		
+		if not self.user_details.get('session_key', 'user'):
 			wiz = gui.auth_wizard.AuthWizard(API_KEY, API_SECRET, self)
 			wiz.show()
 		else:
-			self.auth_data = (API_KEY, API_SECRET, self.settings.get('session_key', None, 'user'))
-			self.current_user = pylast.User(self.settings.get('name', '', 'user'), *self.auth_data)
-			
-			main = gui.main_window.MainWindow(self)
-			
+			self.auth_data = (API_KEY, API_SECRET, self.user_details.get('session_key', 'user'))
+			self.current_user = pylast.User(self.user_details.get('name', 'user'), *self.auth_data)
+			main = gui.main_window.MainWindow(self)			
 			main.fire_up()
-		
+			
 		gtk.gdk.threads_init() 
 		gtk.main()
+		
+
+	def on_click_url(self, sender, url, data):
+		webbrowser.open(url)

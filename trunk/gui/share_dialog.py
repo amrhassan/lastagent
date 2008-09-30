@@ -37,7 +37,8 @@ class ShareDialog(SuperDialog):
 		self.setup()
 		
 		user = self.app.current_user
-		user.async_call(self.on_getfriends_done, user.getFriends)
+		if self.app.settings.get_bool('autocomplete_from_friends', 'sharing'):
+			user.async_call(self.on_getfriends_done, user.getFriends)
 		user.start()
 		self.show_waiting()
 	
@@ -52,7 +53,7 @@ class ShareDialog(SuperDialog):
 		self.set_response_sensitive(gtk.RESPONSE_OK, True)
 		self.set_default_response(gtk.RESPONSE_OK)
 		self.list.add_entry.grab_focus()
-		self.show_waiting(False)
+		self.hide_waiting()
 	
 	def setup(self):
 		

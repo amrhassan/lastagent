@@ -30,13 +30,13 @@ class Banshee(DBusPlayer):
 		return self.dbus_objects[0].GetCurrentState() == 'playing'
 	
 	def getArtist(self):
-		if self.isRunning() and self.isPlaying():
+		try:
 			return unicode(self.dbus_objects[0].GetCurrentTrack()['artist'])
-		else:
+		except:
 			return None
 	
 	def getTitle(self):
-		if self.isRunning() and self.isPlaying():
+		try:
 			return unicode(self.dbus_objects[0].GetCurrentTrack()['name'])
-		else:
+		except:
 			return None

@@ -140,9 +140,9 @@ class AuthWizard(object):
 			self.order_index -= 1
 			self.show_error(sender.last_error())
 		else:
-			self.app.settings.set('name', output['name'], 'user')
-			self.app.settings.set('subscriber', str(output['subscriber']), 'user')
-			self.app.settings.set('session_key', output['key'], 'user')
+			self.app.user_details.set('name', output['name'], 'user')
+			self.app.user_details.set('subscriber', str(output['subscriber']), 'user')
+			self.app.user_details.set('session_key', output['key'], 'user')
 			
 			self.proceed_on()
 			self.forward_button.clicked()

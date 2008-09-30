@@ -3,7 +3,7 @@ import py2deb
 from os.path import join, split
 
 NAME = 'lastagent'
-VERSION = '0.1.1'
+VERSION = '0.2.0'
 DESCRIPTION = 'A Last.fm music tracker for Linux'
 LICENSE = 'gpl'
 DEPENDS = 'python, python-dbus, python-gtk2, python-sexy'
@@ -12,14 +12,14 @@ URL = 'http://lastagent.tuxfamily.org'
 AUTHOR = 'Amr Hassan'
 EMAIL = 'amr.hassan@gmail.com'
 ARCHITECTURE = 'all'
-CHANGES = open('CHANGES').read()
+CHANGES = ''
 
 app = py2deb.Py2deb(NAME, DESCRIPTION, LICENSE, DEPENDS, SECTION, ARCHITECTURE, URL, AUTHOR, EMAIL)
 
 root = '/usr/share/lastagent'
 
 forbidden_dirs = ('.svn', '.py2deb_build_folder')
-forbidden_files = ('geany_run_script.sh', 'lastagent.desktop', '_tmp-lastagent', '_packager.py')
+forbidden_files = ('geany_run_script.sh', 'lastagent.desktop', '_tmp-lastagent', '_packager.py', 'INSTALL', 'installer')
 files = {}
 files[root] = list()
 

@@ -18,23 +18,32 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA
 
-import amarok
-import banshee
-import audacious
-import rhythmbox
-
-def getRunning():
-	"""Returns an instance of Player or None."""	
+def get_default(value_name):
+	values = {
+	'last_preset': 'Default',
+	'presets': 'Default',
+	'updating_interval': 2,
+	'main_show_album': True,
+	'main_keep_above': True,
+	'main_opacity': 1.0,
+	'main_skip_taskbar': True,
+	'main_resizable': False,
+	'main_decorated': True,
+	'main_show_statusbar': True,
+	'main_show_buttons': True,
+	'main_show_artist': True,
+	'main_show_title': True,
+	'main_show_album': True,
+	'main_show_art': True,
+	'main_smaller_buttons': False,
+	'menu_show_track': True,
+	'menu_track_art_size': 40,
+	'main_art_dimension': 174,
+	'autocomplete_from_track_toptags': True,
+	'autocomplete_from_user_toptags': True,
+	'autocomplete_from_friends': True
+	}
 	
-	available_players = (
-	amarok.Amarok(),
-	audacious.Audacious(),
-	rhythmbox.Rhythmbox(),
-	banshee.Banshee()
-	)
-		
-	for player in available_players:
-		if player.isRunning() and player.isPlaying():
-			return player
+	if value_name in values.keys():
+		return values[value_name]
 	
-	return None

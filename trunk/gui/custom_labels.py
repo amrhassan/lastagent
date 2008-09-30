@@ -75,7 +75,7 @@ class LinkLabel(gtk.EventBox):
 		self.url = url
 		
 		self.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.HAND2))
-	
+
 	def open_url(self):
 		webbrowser.open(self.url)
 	

@@ -22,6 +22,7 @@ import gtk
 import pylast
 from stock_setup import *
 from custom_widgets import *
+from custom_labels import *
 
 class AddDialog(SuperDialog):
 	
@@ -45,6 +46,8 @@ class AddDialog(SuperDialog):
 		self.description_label = gtk.Label()
 		self.playlists_combo = PlaylistCombo()
 		self.description_label = gtk.Label()
+		self.edit_button = gtk.Button()
+		self.edit_button_box = gtk.HBox()
 		
 		#description_label
 		self.description_label.set_line_wrap(True)
@@ -56,11 +59,22 @@ class AddDialog(SuperDialog):
 		self.playlists_combo.show()
 		self.playlists_combo.connect('changed', self.on_playlists_combo_changed)
 		
+		#edit_button
+		self.edit_button.set_label('Edit your playlists')
+		self.edit_button.set_image(gtk.image_new_from_stock(gtk.STOCK_EDIT, gtk.ICON_SIZE_MENU))
+		self.edit_button.connect('clicked', self.on_edit_button_clicked)
+		self.edit_button.show()
+		
+		#edit_button_box
+		self.edit_button_box.pack_end(self.edit_button, False, False)
+		self.edit_button_box.show()
+		
 		#self
 		self.set_title('Choose a playlist...')
 		self.set_border_width(10)
 		self.vbox.pack_start(self.description_label, False, False, 5)
-		self.vbox.pack_start(self.playlists_combo, False, False, 5)
+		self.vbox.pack_start(self.playlists_combo, False, False)
+		self.vbox.pack_start(self.edit_button_box, False, False, 5)
 		self.playlists_combo.set_sensitive(False)
 		self.resize(400, 100)
 		self.action_area.show_all()
@@ -76,8 +90,9 @@ class AddDialog(SuperDialog):
 			
 		self.playlists = list
 		
-		self.show_waiting(False)
+		self.hide_waiting()
 		self.playlists_combo.set_sensitive(True)
+		self.playlists_combo.grab_focus()
 	
 	def get_playlist_id(self):
 		
@@ -95,3 +110,7 @@ class AddDialog(SuperDialog):
 		else:
 			self.set_response_sensitive(gtk.RESPONSE_OK, True)
 			self.set_default_response(gtk.RESPONSE_OK)
+	
+	def on_edit_button_clicked(self, button):
+		import webbrowser
+		webbrowser.open(self.app.current_user.getURL() + '/library/playlists')

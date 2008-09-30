@@ -161,7 +161,7 @@ class AuthWizard(object):
 		#dialog
 		self.dialog = gtk.Dialog('Authentication Wizard', None, gtk.DIALOG_DESTROY_WITH_PARENT)
 		self.dialog.set_border_width(10)
-		self.dialog.resize(450, 250)
+		self.dialog.resize(450, 200)
 		
 		#redo_button
 		self.redo_button = gtk.Button('back', gtk.STOCK_REDO)

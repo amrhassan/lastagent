@@ -46,4 +46,6 @@ def get_default(value_name):
 	
 	if value_name in values.keys():
 		return values[value_name]
+	else:
+		return ''
 	

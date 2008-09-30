@@ -37,7 +37,7 @@ class Application(object):
 	
 	def __init__(self):
 		
-		self.version = '0.2.0'
+		self.version = '0.2.1'
 		self.name = 'Last Agent'
 		self.author = 'Amr Hassan'
 		self.comment = 'A Last.fm music tracker for Linux'

@@ -22,7 +22,7 @@ import dbus
 import os
 
 def shell(command):
-	return os.popen(command).read().strip()
+	return unicode(os.popen(command).read().strip())
 
 class Audacious():
 	
@@ -40,12 +40,33 @@ class Audacious():
 	
 	def getArtist(self):
 		if self.isRunning() and self.isPlaying():
-			return unicode(shell('audtool current-song').split('-')[0].strip())
+			return shell('audtool current-song-tuple-data artist')
 		else:
 			return None
 	
 	def getTitle(self):
 		if self.isRunning() and self.isPlaying():
-			return unicode(shell('audtool current-song').split('-')[1].strip())
+			return shell('audtool current-song-tuple-data title')
 		else:
 			return None
+
+	def getName(self):
+		return "Audacious"
+	
+	def getIconStackName(self):
+		return 'player-audacious-icon'
+	
+	def hasControls(self):
+		return True
+	
+	def next(self):
+		shell('audtool playlist-advance')
+	
+	def prev(self):
+		shell('audtool playlist-reverse')
+	
+	def play(self):
+		shell('audtool playback-playpause')
+	
+	def pause(self):
+		shell('audtool playback-playpause')

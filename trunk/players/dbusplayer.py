@@ -30,6 +30,7 @@ class DBusPlayer():
 		self.bus = dbus.SessionBus()
 		self.pairs = dbus_name_path_pairs
 		self.dbus_objects = None
+		self.isRunning()
 	
 	def setup_objects(self):
 		self.dbus_objects = []

@@ -22,11 +22,12 @@ import gtk
 from custom_widgets import *
 
 class EditPresets(gtk.Dialog):
-	def __init__(self, parent, app, apply_func):
+	def __init__(self, parent, app, apply_func, change_preset_func):
 		gtk.Dialog.__init__(self, 'Edit Presets', parent, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT | gtk.CAN_DEFAULT)
 		
 		self.app = app
 		self.apply_func = apply_func
+		self.change_preset = change_preset_func
 		self.bool_options = []
 		self.int_options = []
 		self.setup()
@@ -114,7 +115,7 @@ class EditPresets(gtk.Dialog):
 		for preset in self.presets:
 			self.top_combo.append_text(preset)
 		
-		current = self.app.presets.get('last_preset', 'general')
+		current = self.app.presets.get('current_preset', 'general')
 		self.top_combo.set_active(self.presets.index(current))
 	
 	def load_preset(self, preset_name):
@@ -131,6 +132,7 @@ class EditPresets(gtk.Dialog):
 	def on_combo_change(self, sender):
 		new = self.presets[sender.get_active()]
 		self.load_preset(new)
+		self.change_preset(new)
 	
 	def get_selected_preset(self):
 		return self.selected_preset
@@ -149,8 +151,8 @@ class EditPresets(gtk.Dialog):
 		if new_name != old_name:
 			self.presets[index] = new_name
 			self.app.presets.set('presets', ';'.join(self.presets), 'general')
-			if self.app.presets.get('last_preset', 'general') == old_name:
-				self.app.presets.set('last_preset', new_name, 'general')
+			if self.app.presets.get('current_preset', 'general') == old_name:
+				self.app.presets.set('current_preset', new_name, 'general')
 			self.load_presets()
 	"""
 	
@@ -162,8 +164,8 @@ class EditPresets(gtk.Dialog):
 		removed = self.get_selected_preset()
 		self.presets.remove(removed)
 		self.app.presets.set('presets', ';'.join(self.presets), 'general')
-		if self.app.presets.get('last_preset', 'general') == removed:
-			self.app.presets.set('last_preset', self.presets[0], 'general')
+		if self.app.presets.get('current_preset', 'general') == removed:
+			self.app.presets.set('current_preset', self.presets[0], 'general')
 			self.apply_func()
 		self.load_presets()
 
@@ -192,7 +194,7 @@ class BoolOption(gtk.CheckButton):
 	def _on_self_toggled(self, sender):
 		self.ini.set(self.ini_name, self.get_active(), 'preset:' + self.get_selected_preset())
 		
-		if self.ini.get('last_preset', 'general') == self.get_selected_preset():
+		if self.ini.get('current_preset', 'general') == self.get_selected_preset():
 			self.apply()
 	
 	def reset(self):
@@ -219,7 +221,7 @@ class IntOption(gtk.HBox):
 	def _on_value_changed(self, sender):
 		self.ini.set(self.ini_name, int(self.spin.get_value()), 'preset:' + self.get_selected_preset())
 		
-		if self.ini.get('last_preset', 'general') == self.get_selected_preset():
+		if self.ini.get('current_preset', 'general') == self.get_selected_preset():
 			self.apply()
 
 	def reset(self):

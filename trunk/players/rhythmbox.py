@@ -47,3 +47,24 @@ class Rhythmbox(DBusPlayer):
 			return unicode(props['title'])
 		else:
 			return None
+	
+	def getName(self):
+		return 'Rhythmbox'
+	
+	def hasControls(self):
+		return True
+	
+	def getIconStackName(self):
+		return 'player-rhythmbox-icon'
+	
+	def play(self):
+		self.dbus_objects[0].playPause(False)
+	
+	def pause(self):
+		self.dbus_objects[0].playPause(False)
+	
+	def next(self):
+		self.dbus_objects[0].next()
+	
+	def prev(self):
+		self.dbus_objects[0].previous()

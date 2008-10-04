@@ -35,7 +35,7 @@ from about_dialog import AboutApp
 from custom_widgets import *
 from add_dialog import *
 from presets_edit_dialog import *
-
+from status_bar import *
 
 PROCESS_TAG = 0
 PROCESS_LOVE = 1
@@ -53,7 +53,7 @@ class MainWindow(gtk.Window):
 		
 		self.app = application
 		
-		self.active_preset = 'preset:' + self.app.presets.get('last_preset', 'general')
+		self.active_preset = 'preset:' + self.app.presets.get('current_preset', 'general')
 		self.presets_dict = {}	#{preset_radio_menuitem: 'preset_name',}
 		
 		self.hidden = False
@@ -122,7 +122,7 @@ class MainWindow(gtk.Window):
 		self.show()
 		
 		#status_icon
-		self.status_icon.set_from_stock(STOCK_LASTAGENT)
+		self.status_icon.set_from_pixbuf(self.app.pixbuf_icon)
 		self.status_icon.set_visible(True)
 		self.status_icon.set_tooltip(self.get_title())
 		self.status_icon.connect('activate', self.on_status_icon_activate)
@@ -183,9 +183,7 @@ class MainWindow(gtk.Window):
 		self.not_playing_label.set_sensitive(False)
 		
 		#status_bar
-		self.status_bar.set_default_icon_from_stock(STOCK_NETWORK)
-		self.status_bar.set_default_status('Ready.')
-		self.status_bar.reset_to_default(0)
+		self.status_bar.set_to_not_playing()
 		
 		#love_image
 		self.love_image.set_from_stock(STOCK_LOVE, gtk.ICON_SIZE_BUTTON)
@@ -297,11 +295,11 @@ class MainWindow(gtk.Window):
 				track_item = gtk.ImageMenuItem(self.shown_track.toStr())
 				size = self.app.presets.get_int('menu_track_art_size', self.active_preset)
 				track_item.set_image(gtk.image_new_from_pixbuf(self.art_store.get_image(self.current_art_filename, size)))
-				track_item.connect('button-press-event', self.on_track_menuitem_pressed)
+				track_item.connect('button-release-event', self.on_track_menuitem_pressed)
 				menu.append(track_item)	
 			else:
 				show_item = gtk.ImageMenuItem('Sh_ow')
-				show_item.connect('button-press-event', self.on_track_menuitem_pressed)
+				show_item.connect('button-release-event', self.on_track_menuitem_pressed)
 				menu.append(show_item)
 			
 			menu.append(gtk.SeparatorMenuItem())
@@ -317,7 +315,7 @@ class MainWindow(gtk.Window):
 			artist_menu.append(self.tag_artist_action.create_menu_item())
 			artist_menu.append(self.share_artist_action.create_menu_item())
 			
-			artist_item = gtk.ImageMenuItem('A_rtist')
+			artist_item = gtk.ImageMenuItem(self.shown_artist.getName())
 			artist_item.set_image(gtk.image_new_from_stock(STOCK_ARTIST, gtk.ICON_SIZE_MENU))
 			artist_item.set_submenu(artist_menu)
 			menu.append(artist_item)
@@ -325,7 +323,7 @@ class MainWindow(gtk.Window):
 			if self.shown_album:
 				#menu.append(gtk.SeparatorMenuItem())
 				
-				album_item = gtk.ImageMenuItem('A_lbum')
+				album_item = gtk.ImageMenuItem(self.shown_album.getTitle())
 				album_item.set_image(gtk.image_new_from_stock(STOCK_ALBUM, gtk.ICON_SIZE_MENU))
 				
 				album_menu = gtk.Menu()
@@ -347,9 +345,9 @@ class MainWindow(gtk.Window):
 		group = None
 		for preset in presets:
 			preset_item = gtk.RadioMenuItem(group, preset)
-			if preset == self.app.presets.get('last_preset', 'general'):
+			if preset == self.app.presets.get('current_preset', 'general'):
 				preset_item.set_active(True)
-			preset_item.connect('button-press-event', self.on_preset_changed)
+			preset_item.connect('button-release-event', self.on_preset_changed)
 			self.presets_dict[preset_item] = preset
 			if not group:
 				group = preset_item
@@ -357,7 +355,7 @@ class MainWindow(gtk.Window):
 		
 		submenu.append(gtk.SeparatorMenuItem())
 		edit_item = gtk.ImageMenuItem('_Edit')
-		edit_item.connect('button-press-event', self.on_edit_menu_clicked)
+		edit_item.connect('button-release-event', self.on_edit_menu_clicked)
 		submenu.append(edit_item)
 		
 		menu.append(display_item)
@@ -372,32 +370,36 @@ class MainWindow(gtk.Window):
 	def on_preset_changed(self, sender, event):
 		preset = self.presets_dict[sender]
 		
-		self.app.presets.set('last_preset', preset, 'general')
-		self.active_preset = 'preset:' + preset
+		self.change_preset(preset)
+	
+	def change_preset(self, new_preset = None):
+		self.active_preset = 'preset:' + new_preset
+		
+		self.app.presets.set('current_preset', new_preset, 'general')
 		self.apply_configs()
 	
-	def get_playing_track(self):
+	def get_playing_data(self):
+		"""Returns a (player, track) tuple."""
+		
 		player = players.current.getRunning()
 		
 		if player:
-			return Track(player.getArtist(), player.getTitle(), *self.app.auth_data)
+			return (player, Track(player.getArtist(), player.getTitle(), *self.app.auth_data))
 		
 		return None
 	
 	def show_not_playing(self, not_playing = True):
-		
 		if not_playing:
 			self.not_playing_label.show()
 			self.track_box.hide()
 			self.track_buttons_box.set_sensitive(False)
 			self.album_label.hide()
 			self.status_icon.set_tooltip(self.get_title())
-			self.status_bar.set_icon_from_stock(STOCK_IDLE_NETWORK)
+			self.status_bar.set_to_not_playing()
 		else:
 			self.not_playing_label.hide()
 			self.track_box.show()
 			self.track_buttons_box.set_sensitive(True)
-			self.status_bar.set_icon_from_stock(STOCK_NETWORK)
 		
 		self.set_art()
 	
@@ -413,20 +415,25 @@ class MainWindow(gtk.Window):
 		self.art.set_from_pixbuf(image_pixbuf)
 
 	def show_track(self):
-		
 		self.restart_timer()
-		track = self.get_playing_track()
+		data = self.get_playing_data()
 		
-		if not track:
+		if not data:
+			gtk.gdk.threads_enter()
 			self.show_not_playing()
 			self.shown_track = None
 			self.shown_album = None
 			self.shown_artist = None
+			gtk.gdk.threads_leave()
 			return
+		
+		player = data[0]
+		track = data[1]
 		
 		if self.shown_track and track._hash() == self.shown_track._hash():
 			return
 		
+		gtk.gdk.threads_enter()
 		self.album_label.hide()
 		self.show_not_playing(not_playing = False)
 		
@@ -434,15 +441,17 @@ class MainWindow(gtk.Window):
 		self.title_label.set_track(track)
 		self.set_art()
 		
-		track.async_call(self._get_image_callback, track.getImage, pylast.IMAGE_LARGE, True)
-		track.start()
-		
 		artist = track.getArtist()
 		
 		self.shown_track = track
 		self.shown_artist = artist
 		self.shown_album = None
 		self.status_icon.set_tooltip(track.toStr())
+		self.status_bar.set_player(player)
+		gtk.gdk.threads_leave()
+		
+		track.async_call(self._get_image_callback, track.getImage, pylast.IMAGE_LARGE, True)
+		track.start()
 	
 	def restart_timer(self):
 		
@@ -452,15 +461,19 @@ class MainWindow(gtk.Window):
 		self.timer.start()
 	
 	def _set_art_callback(self, sender, file_path):
+		gtk.gdk.threads_enter()
 		self.set_art(file_path)
+		gtk.gdk.threads_leave()
 	
 	def _get_image_callback(self, sender, url):
 		
 		#show album
 		if sender.getAlbum().getTitle() and self.app.presets.get_bool('main_show_album', self.active_preset):
+			gtk.gdk.threads_enter()
 			self.album_label.show()
 			self.shown_album = sender.getAlbum()
 			self.album_label.set_album(self.shown_album)
+			gtk.gdk.threads_leave()
 		
 		#get cached image
 		cacher = Cacher(self.app.cache_dir)
@@ -591,7 +604,6 @@ class MainWindow(gtk.Window):
 	def toggle_iconified(self):
 		if self.hidden:
 			self.show()
-			self.present()
 		else:
 			self.hide()
 	
@@ -704,5 +716,5 @@ class MainWindow(gtk.Window):
 		self.shown_track = None
 
 	def on_edit_menu_clicked(self, sender, event):
-		d = EditPresets(self, self.app, self.apply_configs)
+		d = EditPresets(self, self.app, self.apply_configs, self.change_preset)
 		d.show()

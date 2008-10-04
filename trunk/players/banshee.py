@@ -24,7 +24,7 @@ class Banshee(DBusPlayer):
 	
 	def __init__(self):
 		
-		DBusPlayer.__init__(self, 'banshee-1', ('org.bansheeproject.Banshee', '/org/bansheeproject/Banshee/PlayerEngine'))
+		DBusPlayer.__init__(self, 'banshee-1', ('org.bansheeproject.Banshee', '/org/bansheeproject/Banshee/PlayerEngine'), ('org.bansheeproject.Banshee', '/org/bansheeproject/Banshee/PlaybackController'))
 	
 	def isPlaying(self):
 		return self.dbus_objects[0].GetCurrentState() == 'playing'
@@ -40,3 +40,24 @@ class Banshee(DBusPlayer):
 			return unicode(self.dbus_objects[0].GetCurrentTrack()['name'])
 		except:
 			return None
+	
+	def getName(self):
+		return "Banshee"
+	
+	def hasControls(self):
+		return True
+	
+	def next(self):
+		self.dbus_objects[1].Next(False)
+	
+	def prev(self):
+		self.dbus_objects[1].Previous(False)
+	
+	def play(self):
+		self.dbus_objects[0].Play()
+	
+	def pause(self):
+		self.dbus_objects[0].TogglePlaying()
+	
+	def getIconStackName(self):
+		return "player-banshee-icon"

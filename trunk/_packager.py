@@ -1,9 +1,10 @@
 import os
 import py2deb
 from os.path import join, split
+import application
 
 NAME = 'lastagent'
-VERSION = '0.2.1'
+VERSION = application.VERSION
 DESCRIPTION = 'A Last.fm music tracker for Linux'
 LICENSE = 'gpl'
 DEPENDS = 'python, python-dbus, python-gtk2, python-sexy'
@@ -51,8 +52,9 @@ app.generate(VERSION, CHANGES, True, False)
 
 os.system('sudo dpkg -i *.deb')
 
+os.system('mkdir -p ../package/')
 os.system('mv *.deb ../package/ -f -v')
 os.system('mv *.rpm ../package/ -f -v')
 
-os.system('mkdir ../package/lastagent-' + VERSION)
+os.system('mkdir -p ../package/lastagent-' + VERSION)
 os.system('cp -fr * ../package/lastagent-' + VERSION)

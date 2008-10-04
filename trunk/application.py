@@ -26,6 +26,7 @@ import os
 import gui.auth_wizard
 import gui.main_window
 import gtk
+import gobject
 import pylast
 import webbrowser
 import default_values
@@ -33,17 +34,14 @@ import default_values
 API_KEY =		'ecc0d2ded1ab6c21f1c9716a47476e45'
 API_SECRET = 	'861595fdeeaf6142def95a0317482251'
 
+NAME = 'Last Agent'
+AUTHOR = 'Amr Hassan'
+COMMENT = 'A Last.fm music tracker for Linux'
+VERSION = '0.2.2'
+
 class Application(object):
 	
 	def __init__(self):
-		
-		self.version = '0.2.1'
-		self.name = 'Last Agent'
-		self.author = 'Amr Hassan'
-		self.comment = 'A Last.fm music tracker for Linux'
-		self.pixbuf_icon = gtk.gdk.pixbuf_new_from_file('gui/images/app.png')
-		self.waiting_animation = gtk.gdk.PixbufAnimation('gui/images/waiting1.gif')
-		
 		self.config_dir = os.path.expanduser('~/.lastagent/')
 		self.cache_dir = os.path.join('/', self.config_dir, 'cache')
 		
@@ -55,6 +53,13 @@ class Application(object):
 		self.settings = ini.INI(os.path.join('/', self.config_dir, 'settings.conf'), default_values.get_default)
 		
 		gtk.link_button_set_uri_hook(self.on_click_url, None)
+		
+		self.version = VERSION
+		self.name = NAME
+		self.author = AUTHOR
+		self.comment = COMMENT
+		self.pixbuf_icon = gtk.gdk.pixbuf_new_from_file('gui/images/app_' + self.settings.get('icon_color', 'general') + '.png')
+		self.waiting_animation = gtk.gdk.PixbufAnimation('gui/images/waiting1.gif')
 
 	
 	def run(self):
@@ -70,7 +75,8 @@ class Application(object):
 			self.current_user = pylast.User(self.user_details.get('name', 'user'), *self.auth_data)
 			main = gui.main_window.MainWindow(self)			
 			main.fire_up()
-			
+		
+		gobject.threads_init()
 		gtk.gdk.threads_init() 
 		gtk.main()
 		

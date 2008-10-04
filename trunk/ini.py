@@ -46,7 +46,7 @@ class INI(object):
 			section = self.__defaultSection
 		
 		if not section in self.__root or not name in self.__root[section]:
-			self.set(name, self.get_default(name), section)
+			self.set(name, self.get_default(name, section), section)
 		
 		return self.__root[section][name]
 	

@@ -43,3 +43,24 @@ class Amarok():
 			return shell('dcop amarok player title')
 		else:
 			return None
+	
+	def getName(self):
+		return "Amarok"
+	
+	def hasControls(self):
+		return True
+	
+	def next(self):
+		shell('dcop amarok player next')
+	
+	def prev(self):
+		shell('dcop amarok player prev')
+	
+	def play(self):
+		shell('dcop amarok player playPause')
+	
+	def pause(self):
+		shell('dcop amarok player playPause')
+	
+	def getIconStackName(self):
+		return "player-amarok-icon"

@@ -71,56 +71,6 @@ class PlaylistCombo(gtk.ComboBox):
 			size = str(size) + ' tracks'
 		
 		self.p_model.append([name, size])
-
-class StatusBar(gtk.VBox):
-	def __init__(self):
-		gtk.VBox.__init__(self)
-		
-		sep = gtk.HSeparator()
-		self.pack_start(sep, False, False)
-		sep.show()
-		
-		self.hbox = gtk.HBox()
-		self.pack_start(self.hbox, False, False)
-		self.hbox.set_border_width(3)
-		self.hbox.show()
-		
-		self.icon = gtk.Image()
-		self.hbox.pack_start(self.icon, False, False)
-		self.icon.show()
-		
-		self.label = gtk.Label()
-		self.hbox.pack_start(self.label, True, True, 5)
-		self.label.set_alignment(0, 0.5)
-		self.label.show()
-		
-		self.current_message_id = 0
-	
-	def set_icon_from_stock(self, stock_id):
-		self.icon.set_from_stock(stock_id, gtk.ICON_SIZE_MENU)
-	
-	def set_default_icon_from_stock(self, stock_id):
-		self.default_stock = stock_id
-	
-	def set_default_status(self, status):
-		self.default_status = status
-	
-	def reset_to_default(self, timer_id):
-		if timer_id == self.current_message_id:
-			self.set_icon_from_stock(self.default_stock)
-			self.set_status(self.default_status)
-	
-	def set_icon_from_animation(self, pixbufanimation):
-		self.icon.set_from_animation(pixbufanimation)
-	
-	def set_status(self, text, timeout = None):
-		self.label.set_text(text)
-		
-		if timeout:
-			#to prevent longer timeouts from overlapping shorter ones.
-			self.current_message_id += 1
-			timer = threading.Timer(timeout, self.reset_to_default, (self.current_message_id,))
-			timer.start()
 	
 
 class MessageBox(gtk.Dialog):

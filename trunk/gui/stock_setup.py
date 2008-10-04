@@ -23,13 +23,16 @@ import gtk
 STOCK_LOVE = 'lastagent-love-icon'
 STOCK_SHARE = 'lastagent-share-icon'
 STOCK_TAG = 'lastagent-tag-icon'
-STOCK_LASTAGENT = 'lastagent-app-icon'
 STOCK_NETWORK = 'lastagent-network-icon'
 STOCK_IDLE_NETWORK = 'lastagent-idle-network-icon'
 STOCK_ARTIST = 'lastagent-artist-icon'
 STOCK_ALBUM = 'lastagent-album-icon'
 STOCK_USER = 'lastagent-user-icon'
 STOCK_PLAYLIST = 'lastagent-playlist-icon'
+STOCK_AMAROK = 'player-amarok-icon'
+STOCK_BANSHEE = 'player-banshee-icon'
+STOCK_AUDACIOUS = 'player-audacious-icon'
+STOCK_RHYTHMBOX = 'player-rhythmbox-icon'
 
 def get_factory():
 	
@@ -37,13 +40,16 @@ def get_factory():
 		(STOCK_LOVE, 'gui/images/love.png'),
 		(STOCK_TAG, 'gui/images/tag.png'),
 		(STOCK_SHARE, 'gui/images/share.png'),
-		(STOCK_LASTAGENT, 'gui/images/app.png'),
 		(STOCK_NETWORK, 'gui/images/network.ico'),
 		(STOCK_IDLE_NETWORK, 'gui/images/network-idle.png'),
 		(STOCK_ALBUM, 'gui/images/album.png'),
 		(STOCK_USER, 'gui/images/user.png'),
 		(STOCK_ARTIST, 'gui/images/artist.png'),
-		(STOCK_PLAYLIST, 'gui/images/playlist.png')
+		(STOCK_PLAYLIST, 'gui/images/playlist.png'),
+		(STOCK_AMAROK, 'gui/images/amarok.png'),
+		(STOCK_BANSHEE, 'gui/images/banshee.png'),
+		(STOCK_AUDACIOUS, 'gui/images/audacious.png'),
+		(STOCK_RHYTHMBOX, 'gui/images/rhythmbox.png'),
 		]
 	
 	factory = gtk.IconFactory()

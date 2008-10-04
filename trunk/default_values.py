@@ -18,31 +18,62 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA
 
-def get_default(value_name):
+def get_default(value_name, section = None):
 	values = {
-	'last_preset': 'Default',
-	'presets': 'Default',
-	'updating_interval': 2,
-	'main_show_album': True,
-	'main_keep_above': True,
-	'main_opacity': 1.0,
-	'main_skip_taskbar': True,
-	'main_resizable': False,
-	'main_decorated': True,
-	'main_show_statusbar': True,
-	'main_show_buttons': True,
-	'main_show_artist': True,
-	'main_show_title': True,
-	'main_show_album': True,
-	'main_show_art': True,
-	'main_smaller_buttons': False,
-	'menu_show_track': True,
-	'menu_track_art_size': 40,
-	'main_art_dimension': 174,
-	'autocomplete_from_track_toptags': True,
-	'autocomplete_from_user_toptags': True,
-	'autocomplete_from_friends': True
+		'current_preset': 'Default',
+		'presets': 'Default;Smaller;Even Smaller;Just Buttons',
+		'updating_interval': 2,
+		'main_show_album': True,
+		'main_keep_above': True,
+		'main_opacity': 1.0,
+		'main_skip_taskbar': True,
+		'main_resizable': False,
+		'main_decorated': True,
+		'main_show_statusbar': True,
+		'main_show_buttons': True,
+		'main_show_artist': True,
+		'main_show_title': True,
+		'main_show_album': True,
+		'main_show_art': True,
+		'main_smaller_buttons': False,
+		'menu_show_track': True,
+		'menu_track_art_size': 40,
+		'main_art_dimension': 174,
+		'autocomplete_from_track_toptags': True,
+		'autocomplete_from_user_toptags': True,
+		'autocomplete_from_friends': True,
+		'icon_color': 'blue'
 	}
+	
+	section_values = {
+		'preset:Smaller':{
+			'main_art_dimension': 120,
+		},
+		
+		'preset:Even Smaller':{
+			'main_art_dimension': 80,
+			'main_smaller_buttons': True,
+			'main_show_statusbar': False,
+			'main_decorated': False,
+			'main_show_album': False
+		},
+		
+		'preset:Just Buttons':{
+			'main_show_art': 80,
+			'main_smaller_buttons': True,
+			'main_show_statusbar': False,
+			'main_decorated': False,
+			'main_show_album': False,
+			'main_show_artist': False,
+			'main_show_title': False
+		}
+	}
+	
+	print "requesting", value_name, "from", section
+	
+	if section and section in section_values.keys():
+		if value_name in section_values[section].keys():
+			return section_values[section][value_name]
 	
 	if value_name in values.keys():
 		return values[value_name]

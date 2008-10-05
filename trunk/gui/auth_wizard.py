@@ -107,7 +107,7 @@ class AuthWizard(object):
 	def do_auth(self):
 		self.set_image(gtk.STOCK_DIALOG_AUTHENTICATION)
 		self.clear_context()
-		self.add_context_text("Please open the following URL in your web browser and complete the authentication process by giving %s the permission to submit changes to your profile.\nHaving done that, kindly press Forward.")
+		self.add_context_text("Please open the following URL in your web browser and complete the authentication process by giving Last Agent the permission to submit changes to your profile.\nHaving done that, kindly press Forward.")
 		e = gtk.Entry()
 		url = pylast.SessionGenerator(self.api_key, self.secret).getAuthURL(self.token)
 		self.auth_url = url

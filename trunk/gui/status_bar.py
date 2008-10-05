@@ -95,7 +95,10 @@ class StatusBar(gtk.VBox):
 	def _set_default_status(self, status):
 		self.default_status = status
 	
-	def reset_to_default(self, timer_id):
+	def reset_to_default(self, timer_id = None):
+		if not timer_id:
+			timer_id = self.current_message_id
+
 		if timer_id == self.current_message_id:
 			self.set_icon_from_stock(self.default_stock)
 			self.set_status(self.default_status)
@@ -113,14 +116,15 @@ class StatusBar(gtk.VBox):
 			timer.start()
 	
 	def set_player(self, player):
+		self.player = player
 		self._set_default_status("%s (Playing)" %player.getName())
 		self._set_default_icon_from_stock(player.getIconStackName())
 		self.label.set_sensitive(True)
 		self.icon.set_sensitive(True)
-		self.player = player
 		if self.player.hasControls():
 			self.buttons_hbox.set_sensitive(True)
-		self.reset_to_default(0)
+		
+		self.reset_to_default()
 	
 	def set_to_not_playing(self):
 		
@@ -136,4 +140,4 @@ class StatusBar(gtk.VBox):
 		else:
 			self._set_default_status('%s (Stopped)' %self.player.getName())
 		
-		self.reset_to_default(0)
+		self.reset_to_default()

@@ -21,7 +21,7 @@
 def get_default(value_name, section = None):
 	values = {
 		'current_preset': 'Default',
-		'presets': 'Default;Smaller;Even Smaller;Just Buttons',
+		'presets': 'Default;Smaller;No Art;Even Smaller;Just Buttons',
 		'updating_interval': 2,
 		'main_show_album': True,
 		'main_keep_above': True,
@@ -35,6 +35,7 @@ def get_default(value_name, section = None):
 		'main_show_title': True,
 		'main_show_album': True,
 		'main_show_art': True,
+		'main_initial_width': 500,
 		'main_smaller_buttons': False,
 		'menu_show_track': True,
 		'menu_track_art_size': 40,
@@ -42,12 +43,15 @@ def get_default(value_name, section = None):
 		'autocomplete_from_track_toptags': True,
 		'autocomplete_from_user_toptags': True,
 		'autocomplete_from_friends': True,
-		'icon_color': 'blue'
+		'icon_color': 'blue',
 	}
 	
 	section_values = {
 		'preset:Smaller':{
-			'main_art_dimension': 120,
+			'main_art_dimension': 88,
+			'main_smaller_buttons': True,
+			'main_initial_width': 390,
+			'main_resizable': True,
 		},
 		
 		'preset:Even Smaller':{
@@ -59,17 +63,22 @@ def get_default(value_name, section = None):
 		},
 		
 		'preset:Just Buttons':{
-			'main_show_art': 80,
+			'main_show_art': False,
 			'main_smaller_buttons': True,
 			'main_show_statusbar': False,
 			'main_decorated': False,
 			'main_show_album': False,
 			'main_show_artist': False,
 			'main_show_title': False
-		}
+		},
+		
+		'preset:No Art':{
+			'main_show_art': False,
+			'main_initial_width': 350,
+			'main_resizable': True,
+			'main_smaller_buttons': True,
+		},
 	}
-	
-	print "requesting", value_name, "from", section
 	
 	if section and section in section_values.keys():
 		if value_name in section_values[section].keys():

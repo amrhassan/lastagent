@@ -20,6 +20,7 @@
 
 import gtk
 import threading
+import pango
 
 class StatusBar(gtk.VBox):
 	def __init__(self):
@@ -44,6 +45,7 @@ class StatusBar(gtk.VBox):
 		self.label = gtk.Label()
 		self.hbox.pack_start(self.label, True, True, 5)
 		self.label.set_alignment(0, 0.5)
+		self.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
 		self.label.show()
 		
 		self.buttons_hbox = gtk.HBox()
@@ -130,11 +132,9 @@ class StatusBar(gtk.VBox):
 		
 		if not self.player or not self.player.isRunning():
 			self.player = None
-			self._set_default_icon_from_stock('lastagent-idle-network-icon')
-			self.set_icon_from_stock('lastagent-idle-network-icon')
+			self._set_default_icon_from_stock(gtk.STOCK_STOP)
 			self.buttons_hbox.set_sensitive(False)
-			self._set_default_status('Not Playing')
-			self.set_status('Not Playing')
+			self._set_default_status('No Player Detected')
 			self.label.set_sensitive(False)
 			self.icon.set_sensitive(False)
 		else:

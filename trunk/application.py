@@ -37,7 +37,8 @@ API_SECRET = 	'861595fdeeaf6142def95a0317482251'
 NAME = 'Last Agent'
 AUTHOR = 'Amr Hassan'
 COMMENT = 'A Last.fm music tracker for Linux'
-VERSION = '0.2.3'
+VERSION = '0.2.04'
+DEBUGGING = True
 
 class Application(object):
 	
@@ -51,8 +52,6 @@ class Application(object):
 		self.presets = ini.INI(os.path.join('/', self.config_dir, 'display.conf'), default_values.get_default)
 		self.user_details = ini.INI(os.path.join('/', self.config_dir, 'user.conf'), default_values.get_default)
 		self.settings = ini.INI(os.path.join('/', self.config_dir, 'settings.conf'), default_values.get_default)
-		
-		gtk.link_button_set_uri_hook(self.on_click_url, None)
 		
 		self.version = VERSION
 		self.name = NAME
@@ -79,7 +78,10 @@ class Application(object):
 		gobject.threads_init()
 		gtk.gdk.threads_init() 
 		gtk.main()
-		
 
-	def on_click_url(self, sender, url, data):
-		webbrowser.open(url)
+def log_debug(message):
+	if DEBUGGING:
+		print message
+
+def log_message(message):
+	print message

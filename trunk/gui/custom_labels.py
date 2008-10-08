@@ -44,6 +44,10 @@ class LinkLabel(gtk.EventBox):
 		self.connect('leave-notify-event', self.on_mouse_leave)
 		self.open_url_action.connect('activate', self._on_open_url_action_activate)
 	
+	def set_ellipsize(self, mode):
+		#self.label.set_ellipsize(mode)
+		pass
+	
 	def _on_open_url_action_activate(self, sender):
 		self.open_url()
 	

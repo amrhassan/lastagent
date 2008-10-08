@@ -33,10 +33,11 @@ def add_dir(path):
 		else:
 			file_name = split(path)[1]
 			
-			if (not i in forbidden_files) and (not file_name.endswith('~')):
+			if not i in forbidden_files:
 				
 				file_path = join(path, i).strip()
-				files[root].append(file_path)
+				if not file_path.endswith('.pyc'):
+					files[root].append(file_path)
 
 
 add_dir('.')

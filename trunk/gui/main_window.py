@@ -26,6 +26,7 @@ import os
 import sys
 import players.current
 import threading
+import webbrowser
 from share_dialog import ShareDialog
 from tag_dialog import TagDialog
 from custom_labels import *
@@ -65,6 +66,9 @@ class MainWindow(gtk.Window):
 		
 		self.show_track()
 		
+	
+	def reset_size(self):
+		self.resize(self.app.presets.get_int('main_initial_width', self.active_preset), 1)
 	
 	def setup(self):
 		#declarations
@@ -110,7 +114,6 @@ class MainWindow(gtk.Window):
 		
 		
 		#self
-		self.resize(350, 100)
 		self.set_title('%s: %s' %(self.app.name, self.app.current_user.getName()))
 		self.set_position(gtk.WIN_POS_CENTER)
 		self.add(self.main_box)
@@ -245,6 +248,7 @@ class MainWindow(gtk.Window):
 		
 		#album_label
 		self.album_label.set_alignment(0, 0.5)
+		self.album_label.set_ellipsize(pango.ELLIPSIZE_END)
 		self.album_label.set_tag_action(self.tag_album_action)
 		self.album_label.set_share_action(self.share_album_action)
 		
@@ -296,7 +300,7 @@ class MainWindow(gtk.Window):
 				size = self.app.presets.get_int('menu_track_art_size', self.active_preset)
 				track_item.set_image(gtk.image_new_from_pixbuf(self.art_store.get_image(self.current_art_filename, size)))
 				track_item.connect('button-release-event', self.on_track_menuitem_pressed)
-				menu.append(track_item)	
+				menu.append(track_item)
 			else:
 				show_item = gtk.ImageMenuItem('Sh_ow')
 				show_item.connect('button-release-event', self.on_track_menuitem_pressed)
@@ -336,6 +340,12 @@ class MainWindow(gtk.Window):
 				
 			menu.append(gtk.SeparatorMenuItem())
 		
+		profile_item = gtk.ImageMenuItem('_Your Last.fm Page')
+		profile_item.set_image(gtk.image_new_from_stock(STOCK_NETWORK, gtk.ICON_SIZE_MENU))
+		profile_item.connect('button-release-event', self.on_profile_item_clicked)
+		menu.append(profile_item)
+		menu.append(gtk.SeparatorMenuItem())
+		
 		display_item = gtk.ImageMenuItem('Display _Presets')
 		display_item.set_image(gtk.image_new_from_stock(gtk.STOCK_PREFERENCES, gtk.ICON_SIZE_MENU))
 		submenu = gtk.Menu()
@@ -366,6 +376,10 @@ class MainWindow(gtk.Window):
 		menu.show_all()
 		
 		return menu
+	
+	def on_profile_item_clicked(self, sender, event):
+		url = self.app.current_user.getURL()
+		webbrowser.open(url)
 	
 	def on_preset_changed(self, sender, event):
 		preset = self.presets_dict[sender]
@@ -424,6 +438,7 @@ class MainWindow(gtk.Window):
 			self.shown_track = None
 			self.shown_album = None
 			self.shown_artist = None
+			self.reset_size()
 			gtk.gdk.threads_leave()
 			return
 		
@@ -448,6 +463,7 @@ class MainWindow(gtk.Window):
 		self.shown_album = None
 		self.status_icon.set_tooltip(track.toStr())
 		self.status_bar.set_player(player)
+		self.reset_size()
 		gtk.gdk.threads_leave()
 		
 		track.async_call(self._get_image_callback, track.getImage, pylast.IMAGE_LARGE, True)
@@ -518,7 +534,7 @@ class MainWindow(gtk.Window):
 		elif process == PROCESS_ADD:
 			action = 'added'
 			
-		self.status_bar.set_status('%s could not be added.' %object.toStr(), 5.0)
+		self.status_bar.set_status('%s could not be %s.' %(object.toStr(), action), 5.0)
 		self.status_bar.set_icon_from_stock(gtk.STOCK_DIALOG_ERROR)
 		
 		message = 'An error has occured and %s was not %s.\n\nDetails:\n%s' \
@@ -669,6 +685,7 @@ class MainWindow(gtk.Window):
 		self.set_property('skip-taskbar-hint', self.app.presets.get_bool('main_skip_taskbar', self.active_preset))
 		self.set_resizable(self.app.presets.get_bool('main_resizable', self.active_preset))
 		self.set_decorated(self.app.presets.get_bool('main_decorated', self.active_preset))
+		self.reset_size()
 		
 		#status_bar
 		if self.app.presets.get_bool('main_show_statusbar', self.active_preset):
@@ -714,6 +731,7 @@ class MainWindow(gtk.Window):
 		
 		#to reset the art
 		self.shown_track = None
+		self.set_art()
 
 	def on_edit_menu_clicked(self, sender, event):
 		d = EditPresets(self, self.app, self.apply_configs, self.change_preset)

@@ -36,13 +36,16 @@ class AboutApp(gtk.AboutDialog):
 		self.set_wrap_license(True)
 		self.set_website('http://lastagent.googlecode.com/')
 		self.set_authors(('Amr Hassan (amr.hassan@gmail.com)',))
-		self.set_artists(('Chris Gorvan (www.gorvan.com)\n\tApplication icons are taken from the "Last.fm icons 2" set.\n', 'Last.fm web site and official client icon designers\n\tThe rest of the icons.\n'))
+		self.set_artists((
+			'Chris Gorvan (www.gorvan.com)\n\tApplication icons are taken from the "Last.fm icons 2" set.\n',
+			'Last.fm web site and official client icon designers\n\tThe rest of the icons.\n',
+			'Amarok, Banshee, Audacious and Rhythmbox Icon designers\n\tThe Icons of Amarok, Banshee, Audacious and Rhythmbox.\n',
+			))
 		self.set_logo(app.pixbuf_icon)
 		self.set_icon(app.pixbuf_icon)
 		self.connect('response', self.on_response)
 		
 
-	
 	def on_response(self, sender, response):
 		sender.destroy()
 	

@@ -2,4 +2,4 @@
 #labels Featured
 
   * You can tag or share an artist or an album from the main window by right-clicking their name, a menu pops-up with options.
-  * Last Agent can be started hidden by adding '--hidden' switch.
+  * Last Agent can be started hidden by adding the '--hidden' switch to the launcher.

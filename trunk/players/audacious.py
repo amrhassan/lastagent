@@ -18,35 +18,30 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA
 
-import dbus
+from dbusplayer import *
 import os
 
-def shell(command):
-	return unicode(os.popen(command).read().strip())
 
-class Audacious():
+def shell(command):
+	return unicode(os.popen(command).read().strip().encode('utf-8'))
+
+class Audacious(DBusPlayer):
 	
 	def __init__(self):
-		pass
-	
-	def isRunning(self):
-		if shell('pidof audacious'):
-			return True
-		else:
-			return False
+		DBusPlayer.__init__(self, 'audacious', ('org.atheme.audacious', '/org/atheme/audacious'), ('org.atheme.audacious', '/org/atheme/audacious/player'))
 
 	def isPlaying(self):
-		return shell('audtool playback-status') == 'playing'
+		return (self.dbus_objects[0].Status() == 'playing')
 	
 	def getArtist(self):
 		if self.isRunning() and self.isPlaying():
-			return shell('audtool current-song-tuple-data artist')
+			return unicode(self.dbus_objects[0].SongTuple(self.dbus_objects[0].Position(), 'artist'))
 		else:
 			return None
 	
 	def getTitle(self):
 		if self.isRunning() and self.isPlaying():
-			return shell('audtool current-song-tuple-data title')
+			return unicode(self.dbus_objects[0].SongTuple(self.dbus_objects[0].Position(), 'title'))
 		else:
 			return None
 

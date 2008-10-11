@@ -38,7 +38,7 @@ class TagDialog(SuperDialog):
 		if self.app.settings.get_bool('autocomplete_from_track_toptags', 'tagging'):
 			self.target.async_call(self.on_gettoptags_done, self.target.getTopTags)
 		if self.app.settings.get_bool('autocomplete_from_user_toptags', 'tagging'):
-			self.target.async_call(self.on_gettoptags_done, self.app.current_user.getTopTags)
+			self.target.async_call(self.on_getfavtags_done, self.app.current_user.getTopTags)
 		self.target.async_call(self.on_gettags_done, self.target.getTags)
 		self.target.start()
 		self.show_waiting()
@@ -102,4 +102,8 @@ class TagDialog(SuperDialog):
 	
 	def on_gettoptags_done(self, sender, output):
 		for tag in output:
-			self.list.add_completion_string(tag.getName())
+			self.list.add_completion_string(tag.getName(), 'Top Tags')
+			
+	def on_getfavtags_done(self, sender, output):
+		for tag in output:
+			self.list.add_completion_string(tag.getName(), 'Your Favorite Tags')

@@ -424,9 +424,9 @@ class MainWindow(gtk.Window):
 		dimension = self.app.presets.get_int('main_art_dimension', self.active_preset)
 		image_pixbuf = self.art_store.get_image(image_filepath, dimension)
 		
-		self.current_art_filename = image_filepath
-		
-		self.art.set_from_pixbuf(image_pixbuf)
+		if image_pixbuf:
+			self.current_art_filename = image_filepath
+			self.art.set_from_pixbuf(image_pixbuf)
 
 	def show_track(self):
 		self.restart_timer()
@@ -619,7 +619,7 @@ class MainWindow(gtk.Window):
 	
 	def toggle_iconified(self):
 		if self.hidden:
-			self.show()
+			self.present()
 		else:
 			self.hide()
 	

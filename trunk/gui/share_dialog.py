@@ -44,7 +44,7 @@ class ShareDialog(SuperDialog):
 	
 	def on_getfriends_done(self, sender, friends):
 		for friend in friends:
-			self.list.add_completion_string(friend.getName())
+			self.list.add_completion_string(friend.getName(), 'Friends')
 		
 		to_enable = [self.list, self.message_entry, self.message_label]
 		for i in to_enable:

@@ -29,6 +29,9 @@ class EditableList(gtk.VBox):
 		
 		self.filter_add_entry = False
 		
+		self.add_items = {}	#{'label1': (item1, item2, ...), 'label2': (item11, item22, ...)}
+		self.menu_items = {}	#{MenuItem: 'label', }
+		
 		self.setup()
 	
 	def set_description(self, text):
@@ -36,6 +39,7 @@ class EditableList(gtk.VBox):
 	
 	def set_items_stock_id(self, stock_id):
 		self.treeview_pixbufrenderer.set_property('stock-id', stock_id)
+		self.items_stock_id = stock_id
 	
 	def _match_func(self, completion, key, iter, column):
 		model = completion.get_model()
@@ -61,6 +65,7 @@ class EditableList(gtk.VBox):
 		self.remove_box = gtk.HBox()
 		self.remove_button = gtk.Button()
 		self.instruction_label = gtk.Label()
+		self.menu_button = gtk.Button()
 		
 		#add_entry
 		self.add_entry.set_completion(self.completion)
@@ -105,6 +110,7 @@ class EditableList(gtk.VBox):
 		self.treeview_column.add_attribute(self.treeview_textrenderer, 'text', 0)
 		
 		#remove_box
+		self.remove_box.pack_start(self.menu_button, False, False)
 		self.remove_box.pack_end(self.remove_button, False, False)
 		
 		#remove_button
@@ -112,7 +118,53 @@ class EditableList(gtk.VBox):
 		self.remove_button.set_label('_Remove Selected')
 		self.remove_button.connect('clicked', self._on_remove_button_clicked)
 		
+		#menu_button
+		box = gtk.HBox()
+		box.pack_start(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU), False, False)
+		box.pack_start(gtk.Label('Add '), False, False)
+		box.pack_start(gtk.Arrow(gtk.ARROW_RIGHT, gtk.SHADOW_NONE))
+		self.menu_button.add(box)
+		self.menu_button.connect('clicked', self._on_menu_button_clicked)
+			
 		self.show_all()
+	
+	def _get_menu_position(self, menu, user_data):
+		button_a = self.menu_button.get_allocation()
+		self_a = self.parent.get_allocation()
+		
+		x = self.menu_button.x
+		y = self.menu_button.y
+		
+		return (x, y, True)
+	
+	def _on_menu_button_clicked(self, sender):
+		self._create_menu().popup(None, None, None, 0, 0, None)
+		
+	def _create_menu(self):
+		menu = gtk.Menu()
+		
+		for label in self.add_items.keys():
+			menuitem = gtk.MenuItem(label)
+			submenu = gtk.Menu()
+			menuitem.set_submenu(submenu)
+			
+			for item in self.add_items[label]:
+				subitem = gtk.ImageMenuItem(item)
+				print subitem.list_mnemonic_labels()
+				subitem.set_image(gtk.image_new_from_stock(self.items_stock_id, gtk.ICON_SIZE_MENU))
+				submenu.add(subitem)
+				self.menu_items[subitem] = item
+				subitem.connect('button-release-event', self._on_menuitem_clicked)
+			
+			menu.add(menuitem)
+		
+		menu.show_all()
+		
+		return menu
+		
+	
+	def _on_menuitem_clicked(self, sender, event):
+		self.add_list_string(self.menu_items[sender])
 	
 	def _on_add_entry_insert(self, entry, new, new_text_length, position):
 		
@@ -139,12 +191,13 @@ class EditableList(gtk.VBox):
 		
 		self.filter_add_entry = True
 
-	def add_completion_string(self, string):
-		self.completion_model.append((string,))	
-
-	def add_completion_strings(self, *strings):
-		for string in strings:
-			self.add_completion_string(string)
+	def add_completion_string(self, string, label):
+		self.completion_model.append((string,))
+		
+		if not label in self.add_items.keys():
+			self.add_items[label] = []
+		
+		self.add_items[label].append(string)
 	
 	def add_list_string(self, string):
 		if len(string.strip()):

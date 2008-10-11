@@ -20,6 +20,7 @@
 
 import os
 import gtk
+from logger import *
 
 MAX_ART_AGE = 20	#after nth step, the objects get released for garbage collecting.
 
@@ -39,7 +40,9 @@ class ImageStore(object):
 			try:
 				buf = image.get_pixbuf()
 			except:
+				log_debug(self, 'Removed corrupted image at' + file_name + '.')
 				os.remove(file_name)
+				return None
 			
 			self.images[file_name] = image
 			self.cache[file_name] = {}

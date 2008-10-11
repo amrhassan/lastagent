@@ -3,4 +3,4 @@ Steps for installation:
 1. Open a terminal.
 2. cd into the this directory
 3. run 'sh installer'. You may need to sudo it.
-4. You can lunch the app now using the 'lastagent' command, or from the Applications menu.
+4. You can lunch the app now using the 'lastagent' command, or from the Applications menu. Use the --hidden switch if you'd like a silent start.

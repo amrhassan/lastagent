@@ -59,6 +59,9 @@ class Application(object):
 		self.comment = COMMENT
 		self.pixbuf_icon = gtk.gdk.pixbuf_new_from_file('gui/images/app_' + self.settings.get('icon_color', 'general') + '.png')
 		self.waiting_animation = gtk.gdk.PixbufAnimation('gui/images/waiting1.gif')
+		
+		#To make Last Agent work on session startup
+		os.system('cp -f lastagent.hidden.desktop ~/.config/autostart/')
 
 	
 	def run(self):

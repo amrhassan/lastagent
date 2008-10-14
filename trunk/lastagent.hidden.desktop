@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Last Agent (Hidden)
+GenericName=Music Tracker
+Comment=A Last.fm music tracker
+Icon=/usr/share/lastagent/gui/images/app_blue.png
+Exec=lastagent --hidden
+Path=/usr/share/lastagent
+Categories=GTK;Utility;Music;Audio;AudioVideo
+Terminal=false
+
+
+

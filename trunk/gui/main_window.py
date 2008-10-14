@@ -296,10 +296,26 @@ class MainWindow(gtk.Window):
 		#track menu
 		if self.shown_track:
 			if self.app.presets.get_bool('menu_show_track', self.active_preset):
-				track_item = gtk.ImageMenuItem(self.shown_track.toStr())
+				track_item = gtk.ImageMenuItem()
+				
 				size = self.app.presets.get_int('menu_track_art_size', self.active_preset)
 				track_item.set_image(gtk.image_new_from_pixbuf(self.art_store.get_image(self.current_art_filename, size)))
+				
+				vbox = gtk.VBox()
+				artist_l = gtk.Label('by ' + self.shown_track.getArtist().getName())
+				artist_b = gtk.HBox()
+				artist_b.pack_start(artist_l, False, False)
+				title_l = gtk.Label()
+				title_l.set_markup('<b>' + self.shown_track.getTitle() + '</b>')
+				title_b = gtk.HBox()
+				title_b.pack_start(title_l, False, False)
+				vbox.pack_start(title_b, False, False)
+				vbox.pack_start(artist_b, False, False)
+				track_item.add(vbox)
+				
+				
 				track_item.connect('button-release-event', self.on_track_menuitem_pressed)
+				
 				menu.append(track_item)
 			else:
 				show_item = gtk.ImageMenuItem('Sh_ow')
@@ -327,8 +343,12 @@ class MainWindow(gtk.Window):
 			if self.shown_album:
 				#menu.append(gtk.SeparatorMenuItem())
 				
-				album_item = gtk.ImageMenuItem(self.shown_album.getTitle())
+				album_item = gtk.ImageMenuItem()
 				album_item.set_image(gtk.image_new_from_stock(STOCK_ALBUM, gtk.ICON_SIZE_MENU))
+				album_label = gtk.Label(self.shown_album.getTitle())
+				album_label.set_alignment(0, 0.5)
+				album_label.set_ellipsize(pango.ELLIPSIZE_END)
+				album_item.add(album_label)
 				
 				album_menu = gtk.Menu()
 				album_menu.append(self.tag_album_action.create_menu_item())

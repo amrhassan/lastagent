@@ -149,9 +149,11 @@ class EditableList(gtk.VBox):
 			menuitem.set_submenu(submenu)
 			
 			for item in self.add_items[label]:
-				subitem = gtk.ImageMenuItem(item)
-				print subitem.list_mnemonic_labels()
-				subitem.set_image(gtk.image_new_from_stock(self.items_stock_id, gtk.ICON_SIZE_MENU))
+				subitem = gtk.ImageMenuItem(self.items_stock_id)
+				subitem.remove(subitem.get_child())
+				label = gtk.Label(item)
+				label.set_alignment(0, 0.5)
+				subitem.add(label)
 				submenu.add(subitem)
 				self.menu_items[subitem] = item
 				subitem.connect('button-release-event', self._on_menuitem_clicked)

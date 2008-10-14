@@ -34,15 +34,15 @@ class Audacious(DBusPlayer):
 		return (self.dbus_objects[0].Status() == 'playing')
 	
 	def getArtist(self):
-		if self.isRunning() and self.isPlaying():
+		try:
 			return unicode(self.dbus_objects[0].SongTuple(self.dbus_objects[0].Position(), 'artist'))
-		else:
+		except:
 			return None
 	
 	def getTitle(self):
-		if self.isRunning() and self.isPlaying():
+		try:
 			return unicode(self.dbus_objects[0].SongTuple(self.dbus_objects[0].Position(), 'title'))
-		else:
+		except:
 			return None
 
 	def getName(self):

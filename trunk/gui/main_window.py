@@ -302,15 +302,19 @@ class MainWindow(gtk.Window):
 				track_item.set_image(gtk.image_new_from_pixbuf(self.art_store.get_image(self.current_art_filename, size)))
 				
 				vbox = gtk.VBox()
+				vbox_dummy1 = gtk.VBox()
+				vbox_dummy2 = gtk.VBox()
 				artist_l = gtk.Label('by ' + self.shown_track.getArtist().getName())
-				artist_b = gtk.HBox()
-				artist_b.pack_start(artist_l, False, False)
+				artist_l.set_alignment(0, 0.5)
 				title_l = gtk.Label()
 				title_l.set_markup('<b>' + self.shown_track.getTitle() + '</b>')
-				title_b = gtk.HBox()
-				title_b.pack_start(title_l, False, False)
-				vbox.pack_start(title_b, False, False)
-				vbox.pack_start(artist_b, False, False)
+				title_l.set_alignment(0, 0.5)
+
+				
+				vbox.pack_start(vbox_dummy1)
+				vbox.pack_start(title_l, False, False)
+				vbox.pack_start(artist_l, False, False)
+				vbox.pack_start(vbox_dummy2)
 				track_item.add(vbox)
 				
 				

@@ -364,7 +364,7 @@ class MainWindow(gtk.Window):
 				
 			menu.append(gtk.SeparatorMenuItem())
 		
-		profile_item = gtk.ImageMenuItem('_Your Last.fm Page')
+		profile_item = gtk.ImageMenuItem('_My Last.fm Page')
 		profile_item.set_image(gtk.image_new_from_stock(STOCK_NETWORK, gtk.ICON_SIZE_MENU))
 		profile_item.connect('button-release-event', self.on_profile_item_clicked)
 		menu.append(profile_item)

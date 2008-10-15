@@ -75,6 +75,4 @@ class Application(object):
 		main = gui.main_window.MainWindow(self)			
 		main.fire_up()
 		
-		gobject.threads_init()
-		gtk.gdk.threads_init() 
 		gtk.main()

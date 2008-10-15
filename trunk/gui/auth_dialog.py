@@ -84,6 +84,7 @@ class AuthDialog(gtk.Dialog):
 		self.url_box.set_sensitive(False)
 		
 		#url_entry
+		self.url_entry.set_property('editable', False)
 		
 		
 		#url_button

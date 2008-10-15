@@ -27,7 +27,7 @@ def get_default(value_name, section = None):
 		'main_keep_above': True,
 		'main_opacity': 1.0,
 		'main_skip_taskbar': True,
-		'main_resizable': True,
+		'main_resizable': False,
 		'main_decorated': True,
 		'main_show_statusbar': True,
 		'main_show_buttons': True,

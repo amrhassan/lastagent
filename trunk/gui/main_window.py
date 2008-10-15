@@ -19,6 +19,7 @@
 # USA
 
 import gtk
+import gobject
 import pylast
 from pylast import Track
 from cacher import Cacher
@@ -37,6 +38,7 @@ from custom_widgets import *
 from add_dialog import *
 from presets_edit_dialog import *
 from status_bar import *
+from auth_dialog import *
 
 PROCESS_TAG = 0
 PROCESS_LOVE = 1
@@ -48,11 +50,13 @@ class MainWindow(gtk.Window):
 	def __init__(self, application):
 		gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
 		
+		self.app = application
+		
+		self.authenticated = False
+		
 		self.shown_track = None
 		self.shown_artist = None
 		self.shown_album = None
-		
-		self.app = application
 		
 		self.active_preset = 'preset:' + self.app.presets.get('current_preset', 'general')
 		self.presets_dict = {}	#{preset_radio_menuitem: 'preset_name',}
@@ -61,11 +65,25 @@ class MainWindow(gtk.Window):
 		self.art_store = ImageStore()
 		
 		get_factory().add_default()
+	
+	def check_authentication(self):
+		if not self.app.user_details.get('session_key', 'user'):
+			self.toggle_iconified()
+			
+			data = AuthDialog(self, self.app).get_user_data()
+			
+			if not data:
+				exit()
+			else:
+				self.app.user_details.set('name', data['name'], 'user')
+				self.app.user_details.set('subscriber', str(data['subscriber']), 'user')
+				self.app.user_details.set('session_key', data['key'], 'user')
+			
+			self.toggle_iconified()
 		
-		self.setup()
-		
-		self.show_track()
-		
+		self.app.auth_data = (self.app.api_key, self.app.secret, self.app.user_details.get('session_key', 'user'))
+		self.app.current_user = pylast.User(self.app.user_details.get('name', 'user'), *self.app.auth_data)
+		self.authenticated = True
 	
 	def reset_size(self):
 		self.resize(self.app.presets.get_int('main_initial_width', self.active_preset), 1)
@@ -114,7 +132,7 @@ class MainWindow(gtk.Window):
 		
 		
 		#self
-		self.set_title('%s: %s' %(self.app.name, self.app.current_user.getName()))
+		self.reset_title()
 		self.set_position(gtk.WIN_POS_CENTER)
 		self.add(self.main_box)
 		self.connect('delete_event', self.on_self_delete)
@@ -122,7 +140,7 @@ class MainWindow(gtk.Window):
 		self.connect('hide', self.on_self_hide)
 		self.set_icon(self.app.pixbuf_icon)
 		self.deletable = False
-		self.show()
+
 		
 		#status_icon
 		self.status_icon.set_from_pixbuf(self.app.pixbuf_icon)
@@ -290,6 +308,12 @@ class MainWindow(gtk.Window):
 		
 		self.apply_configs()
 	
+	def reset_title(self):
+		if not self.app.current_user:
+			self.set_title('%s' %(self.app.name))
+		else:
+			self.set_title('%s: %s' %(self.app.name, self.app.current_user.getName()))
+	
 	def _create_tray_menu(self):
 		menu = gtk.Menu()
 		
@@ -418,6 +442,9 @@ class MainWindow(gtk.Window):
 	
 	def get_playing_data(self):
 		"""Returns a (player, track) tuple."""
+		
+		if not self.authenticated:
+			return
 		
 		player = players.current.getRunning()
 		
@@ -697,7 +724,11 @@ class MainWindow(gtk.Window):
 		self.set_status_success(PROCESS_ADD, sender)
 	
 	def fire_up(self):
+		self.setup()
 		self.show()
+		self.show_track()
+		self.check_authentication()
+		self.reset_title()
 		
 		if '--hidden' in sys.argv:
 			self.toggle_iconified()

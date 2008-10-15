@@ -23,7 +23,6 @@ pygtk.require('2.0')
 
 import ini
 import os
-import gui.auth_wizard
 import gui.main_window
 import gtk
 import gobject
@@ -68,15 +67,13 @@ class Application(object):
 		
 		self.api_key = API_KEY
 		self.secret = API_SECRET
+		self.current_user = None
 		
-		if not self.user_details.get('session_key', 'user'):
-			wiz = gui.auth_wizard.AuthWizard(API_KEY, API_SECRET, self)
-			wiz.show()
-		else:
-			self.auth_data = (API_KEY, API_SECRET, self.user_details.get('session_key', 'user'))
-			self.current_user = pylast.User(self.user_details.get('name', 'user'), *self.auth_data)
-			main = gui.main_window.MainWindow(self)			
-			main.fire_up()
+		gobject.threads_init()
+		gtk.gdk.threads_init()
+		
+		main = gui.main_window.MainWindow(self)			
+		main.fire_up()
 		
 		gobject.threads_init()
 		gtk.gdk.threads_init() 

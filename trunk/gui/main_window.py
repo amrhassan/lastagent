@@ -307,7 +307,7 @@ class MainWindow(gtk.Window):
 				artist_l = gtk.Label('by ' + self.shown_track.getArtist().getName())
 				artist_l.set_alignment(0, 0.5)
 				title_l = gtk.Label()
-				title_l.set_markup('<b>' + self.shown_track.getTitle() + '</b>')
+				title_l.set_markup('<b>' + self.shown_track.getTitle().replace('&', '&amp;') + '</b>')
 				title_l.set_alignment(0, 0.5)
 
 				
@@ -318,12 +318,12 @@ class MainWindow(gtk.Window):
 				track_item.add(vbox)
 				
 				
-				track_item.connect('button-release-event', self.on_track_menuitem_pressed)
+				track_item.connect('button-press-event', self.on_track_menuitem_pressed)
 				
 				menu.append(track_item)
 			else:
 				show_item = gtk.ImageMenuItem('Sh_ow')
-				show_item.connect('button-release-event', self.on_track_menuitem_pressed)
+				show_item.connect('button-press-event', self.on_track_menuitem_pressed)
 				menu.append(show_item)
 			
 			menu.append(gtk.SeparatorMenuItem())
@@ -662,6 +662,7 @@ class MainWindow(gtk.Window):
 		d.run()
 
 	def on_track_menuitem_pressed(self, sender, event):
+		print "pressed"
 		self.present()
 	
 	def on_self_hide(self, sender):

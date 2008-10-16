@@ -36,7 +36,7 @@ API_SECRET = 	'861595fdeeaf6142def95a0317482251'
 NAME = 'Last Agent'
 AUTHOR = 'Amr Hassan'
 COMMENT = 'A Last.fm music tracker for Linux'
-VERSION = '0.2.05b'
+VERSION = '0.2.05'
 
 
 class Application(object):

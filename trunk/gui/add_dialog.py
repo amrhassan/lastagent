@@ -35,7 +35,7 @@ class AddDialog(SuperDialog):
 		self.setup()
 		
 		user = self.app.current_user
-		user.async_call(self.on_getplaylists_done, user.getPlaylistIDs)
+		user.async_call(self.on_getplaylists_done, user.getPlaylistsData)
 		user.start()
 		self.show_waiting()
 

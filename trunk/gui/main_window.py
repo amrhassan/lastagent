@@ -206,24 +206,8 @@ class MainWindow(gtk.Window):
 		#status_bar
 		self.status_bar.set_to_not_playing()
 		
-		#love_image
-		self.love_image.set_from_stock(STOCK_LOVE, gtk.ICON_SIZE_BUTTON)
-		self.love_image.show()
-		
-		#tag_image
-		self.tag_image.set_from_stock(STOCK_TAG, gtk.ICON_SIZE_BUTTON)
-		self.tag_image.show()
-		
-		#share_image
-		self.share_image.set_from_stock(STOCK_SHARE, gtk.ICON_SIZE_BUTTON)
-		self.share_image.show()
-		
-		#playlist_image
-		self.playlist_image.set_from_stock(STOCK_PLAYLIST, gtk.ICON_SIZE_BUTTON)
-		self.playlist_image.show()
-		
 		#tag_button
-		self.tag_button.set_image(self.tag_image)
+		self.tag_button.set_image(gtk.image_new_from_stock(STOCK_TAG, gtk.ICON_SIZE_BUTTON))
 		self.tag_button.connect_object('clicked', gtk.Action.activate, self.tag_track_action)
 		self.tag_button.set_normal_label('_Tag')
 		self.tag_button.set_smaller_tooltip('Tag')
@@ -231,7 +215,7 @@ class MainWindow(gtk.Window):
 		self.tag_button.show()
 		
 		#share_button
-		self.share_button.set_image(self.share_image)
+		self.share_button.set_image(gtk.image_new_from_stock(STOCK_SHARE, gtk.ICON_SIZE_BUTTON))
 		self.share_button.connect_object('clicked', gtk.Action.activate, self.share_track_action)
 		self.share_button.set_normal_label('_Share')
 		self.share_button.set_smaller_tooltip('Share')
@@ -239,7 +223,7 @@ class MainWindow(gtk.Window):
 		self.share_button.show()
 		
 		#playlist_add_button
-		self.playlist_add_button.set_image(self.playlist_image)
+		self.playlist_add_button.set_image(gtk.image_new_from_stock(STOCK_PLAYLIST, gtk.ICON_SIZE_BUTTON))
 		self.playlist_add_button.connect_object('clicked', gtk.Action.activate, self.playlist_add_action)
 		self.playlist_add_button.set_normal_label('_Add')
 		self.playlist_add_button.set_smaller_tooltip('Add to a playlist')
@@ -247,7 +231,7 @@ class MainWindow(gtk.Window):
 		self.playlist_add_button.show()
 		
 		#love_button
-		self.love_button.set_image(self.love_image)
+		self.love_button.set_image(gtk.image_new_from_stock(STOCK_LOVE, gtk.ICON_SIZE_BUTTON))
 		self.love_button.connect_object('clicked', gtk.Action.activate, self.love_track_action)
 		self.love_button.set_normal_label('_Love')
 		self.love_button.set_smaller_tooltip('Love')

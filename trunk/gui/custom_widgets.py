@@ -116,7 +116,6 @@ class MainButton(gtk.Button):
 		gtk.Button.__init__(self)
 		self.normal_label = ''
 		self.smaller_tooltip = ''
-		self.make_normal()
 	
 	def set_smaller_tooltip(self, tooltip):
 		self.smaller_tooltip = tooltip
@@ -131,10 +130,11 @@ class MainButton(gtk.Button):
 		self.set_relief(gtk.RELIEF_NORMAL)
 	
 	def make_smaller(self):
-		self.set_relief(gtk.RELIEF_NONE)
-		self.set_label('')
-		self.set_tooltip_text(self.smaller_tooltip)
 		self.set_size_request(-1, -1)
+		self.set_tooltip_text(self.smaller_tooltip)
+		self.set_property('label', None)
+		self.set_property('has-tooltip', True)
+		self.set_relief(gtk.RELIEF_NONE)
 
 def get_hboxed(widget, expand = True, fill = True, padding = 0):
 	box = gtk.HBox()

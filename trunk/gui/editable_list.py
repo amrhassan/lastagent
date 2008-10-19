@@ -121,7 +121,7 @@ class EditableList(gtk.VBox):
 		#menu_button
 		box = gtk.HBox()
 		box.pack_start(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU), False, False)
-		box.pack_start(gtk.Label('Add '), False, False)
+		box.pack_start(gtk.Label('Add From... '), False, False)
 		box.pack_start(gtk.Arrow(gtk.ARROW_RIGHT, gtk.SHADOW_NONE))
 		self.menu_button.add(box)
 		self.menu_button.connect('clicked', self._on_menu_button_clicked)

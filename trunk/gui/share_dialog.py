@@ -61,13 +61,17 @@ class ShareDialog(SuperDialog):
 		self.list = EditableList()
 		self.message_entry = gtk.Entry()
 		self.message_label = gtk.Label()
+		self.message_box = gtk.VBox()
 		
 		#self
 		self.set_title('Edit users...')
 		self.set_border_width(10)
 		self.vbox.pack_start(self.list)
-		self.vbox.pack_start(self.message_label, False, False)
-		self.vbox.pack_start(self.message_entry, False, False, 10)
+		self.vbox.pack_start(self.message_box, False, False, 5)
+		
+		#message_box
+		self.message_box.pack_start(self.message_label, False, False)
+		self.message_box.pack_start(self.message_entry, False, False, 2)
 		
 		self.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
 		self.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)

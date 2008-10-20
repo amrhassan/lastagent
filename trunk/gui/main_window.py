@@ -688,14 +688,14 @@ class MainWindow(gtk.Window):
 		
 		ad = AddDialog(self, self.app, target)
 		
-		output = ad.get_playlist_id()
+		playlist = ad.get_playlist()
 		
-		if output:
-			self.playlist_add(output, target)
+		if playlist:
+			self.playlist_add(playlist, target)
 	
-	def playlist_add(self, playlist_id, track):
+	def playlist_add(self, playlist, track):
 		self.set_status_working(PROCESS_ADD, track)
-		track.async_call(self.playlist_add_callback, track.addToPlaylist, playlist_id)
+		track.async_call(self.playlist_add_callback, playlist.addTrack, track)
 		track.start()
 	
 	def playlist_add_callback(self, sender, output):

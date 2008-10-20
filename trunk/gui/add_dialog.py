@@ -35,7 +35,7 @@ class AddDialog(SuperDialog):
 		self.setup()
 		
 		user = self.app.current_user
-		user.async_call(self.on_getplaylists_done, user.getPlaylistsData)
+		user.async_call(self.on_getplaylists_done, user.getPlaylists)
 		user.start()
 		self.show_waiting()
 
@@ -85,8 +85,8 @@ class AddDialog(SuperDialog):
 		
 	
 	def on_getplaylists_done(self, sender, list):
-		for entry in list:
-			self.playlists_combo.add_playlist(entry['title'], int(entry['size']))
+		for playlist in list:
+			self.playlists_combo.add_playlist(playlist.getTitle(), playlist.getSize())
 			
 		self.playlists = list
 		
@@ -94,12 +94,12 @@ class AddDialog(SuperDialog):
 		self.playlists_combo.set_sensitive(True)
 		self.playlists_combo.grab_focus()
 	
-	def get_playlist_id(self):
+	def get_playlist(self):
 		
 		out = None
 		
 		if self.run() == gtk.RESPONSE_OK:
-			out = self.playlists[self.playlists_combo.get_active() - 1]['id']
+			out = self.playlists[self.playlists_combo.get_active() - 1]
 		
 		self.destroy()
 		return out

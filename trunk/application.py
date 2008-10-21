@@ -29,11 +29,59 @@ import gobject
 import webbrowser
 import default_values
 
-REQURIRED_PYLAST = '0.2.14'
+REQURIRED_PYLAST = '>= 0.2.14'
 
 def pylast_check(required):
-	import pylast
-	#TODO
+	pylast_url = 'http://pylast.googlecode.com/'
+	
+	try:
+		import pylast
+	except ImportError, e:
+		print "Messing Dependency: Pylast %s!\nGrab it from %s" %(required, pylast_url)
+		exit()
+	
+	greater = False
+	equal = False
+	smaller = False
+	
+	if '>' in required:
+		greater = True
+	if '<' in required:
+		smaller = True
+	if '=' in required:
+		equal = True
+	
+	required = required[required.find(' ')+1:]
+	
+	def compare(a, b):
+		"""Takes two versions as strings and compares them.
+		Returns 1 if b > a, -1 if b < a, 0 if b == a."""
+		
+		a = a.split('.')
+		b = b.split('.')
+		
+		for i in range(0, len(a)):
+			if int(b[i]) > int(a[i]):
+				#greater
+				return 1
+			elif int(b[i]) < int(a[i]):
+				#smaller
+				return -1
+		
+		#equal
+		return 0
+	
+	c = compare(required, pylast.__version__)
+	
+	if c==1 and greater:
+		pass
+	elif c==-1 and smaller:
+		pass
+	elif c==0 and equal:
+		pass
+	else:
+		print "Messing Dependency: Pylast %s!\nGrab it from %s" %(required, pylast_url)
+		exit()
 
 pylast_check(REQURIRED_PYLAST)
 

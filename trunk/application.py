@@ -26,9 +26,16 @@ import os
 import gui.main_window
 import gtk
 import gobject
-import pylast
 import webbrowser
 import default_values
+
+REQURIRED_PYLAST = '0.2.14'
+
+def pylast_check(required):
+	import pylast
+	#TODO
+
+pylast_check(REQURIRED_PYLAST)
 
 API_KEY =		'ecc0d2ded1ab6c21f1c9716a47476e45'
 API_SECRET = 	'861595fdeeaf6142def95a0317482251'
@@ -42,6 +49,7 @@ VERSION = '0.2.06b'
 class Application(object):
 	
 	def __init__(self):
+		
 		self.config_dir = os.path.expanduser('~/.lastagent/')
 		self.cache_dir = os.path.join('/', self.config_dir, 'cache')
 		
@@ -59,8 +67,10 @@ class Application(object):
 		self.pixbuf_icon = gtk.gdk.pixbuf_new_from_file('gui/images/app_' + self.settings.get('icon_color', 'general') + '.png')
 		self.waiting_animation = gtk.gdk.PixbufAnimation('gui/images/waiting1.gif')
 		
-		#To make Last Agent work on session startup
-		os.system('cp -f lastagent.hidden.desktop ~/.config/autostart/')
+		if self.settings.get_bool('run_on_session_startup', 'general'):
+			os.system('cp -f lastagent.hidden.desktop ~/.config/autostart/')
+		else:
+			os.system('rm -f ~/.config/autostart/lastagent.hidden.desktop')
 
 	
 	def run(self):

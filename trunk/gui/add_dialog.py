@@ -93,6 +93,8 @@ class AddDialog(SuperDialog):
 		self.hide_waiting()
 		self.playlists_combo.set_sensitive(True)
 		self.playlists_combo.grab_focus()
+		if len(list) == 1:
+			self.playlists_combo.set_active(1)
 	
 	def get_playlist(self):
 		

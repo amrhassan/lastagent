@@ -44,6 +44,7 @@ def get_default(value_name, section = None):
 		'autocomplete_from_user_toptags': True,
 		'autocomplete_from_friends': True,
 		'icon_color': 'blue',
+		'run_on_session_startup': False,
 	}
 	
 	section_values = {

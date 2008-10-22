@@ -38,8 +38,7 @@ class ShareDialog(SuperDialog):
 		
 		user = self.app.current_user
 		if self.app.settings.get_bool('autocomplete_from_friends', 'sharing'):
-			user.async_call(self.on_getfriends_done, user.getFriends)
-		user.start()
+			user.async_call(user.getFriends, self.on_getfriends_done)
 		self.show_waiting()
 	
 	def on_getfriends_done(self, sender, friends):

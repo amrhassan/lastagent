@@ -493,8 +493,7 @@ class MainWindow(gtk.Window):
 		self.reset_size()
 		gtk.gdk.threads_leave()
 		
-		track.async_call(self._get_image_callback, track.getImage, pylast.IMAGE_LARGE, True)
-		track.start()
+		track.async_call(track.getImage, self._get_image_callback, (pylast.IMAGE_LARGE, True))
 	
 	def restart_timer(self):
 		
@@ -574,8 +573,7 @@ class MainWindow(gtk.Window):
 		
 		self.set_status_working(PROCESS_LOVE, target)
 		
-		target.async_call(self.love_callback, target.love)
-		target.start()
+		target.async_call(target.love, self.love_callback)
 	
 	def on_share_track_action_activate(self, sender):
 		
@@ -589,8 +587,7 @@ class MainWindow(gtk.Window):
 		
 		if output:
 			self.set_status_working(PROCESS_SHARE, target)
-			target.async_call(self.share_callback, target.share, output[0], output[1])
-			target.start()
+			target.async_call(target.share, self.share_callback, (output[0], output[1]))
 	
 	def tag_callback(self, sender, output):
 		if sender.last_error():
@@ -631,8 +628,7 @@ class MainWindow(gtk.Window):
 		
 		if tag_names != None:
 			self.set_status_working(PROCESS_TAG, target)
-			target.async_call(self.tag_callback, target.setTags, *tag_names)
-			target.start()
+			target.async_call(target.setTags, self.tag_callback, tag_names)
 	
 	def on_status_icon_activate(self, sender):
 		self.toggle_iconified()
@@ -680,8 +676,7 @@ class MainWindow(gtk.Window):
 	
 	def playlist_add(self, playlist, track):
 		self.set_status_working(PROCESS_ADD, track)
-		track.async_call(self.playlist_add_callback, playlist.addTrack, track)
-		track.start()
+		track.async_call(playlist.addTrack, self.playlist_add_callback, (track,))
 	
 	def playlist_add_callback(self, sender, output):
 		

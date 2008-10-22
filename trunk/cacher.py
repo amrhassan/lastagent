@@ -72,6 +72,4 @@ class Cacher(pylast.Asynchronizer):
 		output: The file path of the cached image.
 		"""
 		
-		self.async_call(callback, self.get_cached, url)
-		
-		self.start()
+		self.async_call(call = self.get_cached, callback = callback, call_args = (url,))

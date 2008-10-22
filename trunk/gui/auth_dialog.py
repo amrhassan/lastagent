@@ -104,13 +104,11 @@ class AuthDialog(gtk.Dialog):
 	def do_token(self):
 		self.set_status('Receiving authorization token')
 		
-		self.sg.async_call(self.do_token_callback, self.sg.getToken)
-		self.sg.start()
+		self.sg.async_call(self.sg.getToken, self.do_token_callback)
 	
 	def do_token_callback(self, sender, token):
 		if sender.last_error():
-			self.sg.async_call(self.do_token_callback, self.sg.getToken)
-			self.sg.start()
+			self.sg.async_call(self.sg.getToken, self.do_token_callback)
 			print "Retrying to get token..."
 			return
 		
@@ -122,8 +120,7 @@ class AuthDialog(gtk.Dialog):
 		self.url_box.set_sensitive(True)
 		gtk.gdk.threads_leave()
 		
-		self.sg.async_call(None, self.do_get_data)
-		self.sg.start()
+		self.sg.async_call(self.do_get_data)
 
 	
 	def do_get_data(self):

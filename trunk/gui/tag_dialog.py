@@ -33,14 +33,21 @@ class TagDialog(SuperDialog):
 		self.app = app
 		self.target = target
 		
+		self.okays = [False, False, False]	#A weird way to make sure that the next three functions were done.
+		
 		self.setup()
 		
 		if self.app.settings.get_bool('autocomplete_from_track_toptags', 'tagging'):
-			self.target.async_call(self.on_gettoptags_done, self.target.getTopTags)
+			self.target.async_call(self.target.getTopTags, self.on_gettoptags_done)
+		else:
+			self.okays[0] = True
+		
 		if self.app.settings.get_bool('autocomplete_from_user_toptags', 'tagging'):
-			self.target.async_call(self.on_getfavtags_done, self.app.current_user.getTopTags)
-		self.target.async_call(self.on_gettags_done, self.target.getTags)
-		self.target.start()
+			self.target.async_call(self.app.current_user.getTopTags, self.on_getfavtags_done)
+		else:
+			self.okays[1] = True
+		
+		self.target.async_call(self.target.getTags, self.on_gettags_done)
 		self.show_waiting()
 
 	
@@ -79,13 +86,21 @@ class TagDialog(SuperDialog):
 		for tag in tags:
 			self.list.add_list_string(tag.getName())
 		
+		self.okays[2] = True
+		self._check_okays()
+	
+	def _check_okays(self):
+		for o in self.okays:
+			if not o:
+				return
+		
 		self.list.set_sensitive(True)
 		
 		self.set_response_sensitive(gtk.RESPONSE_OK, True)
 		self.list.add_entry.grab_focus()
 		
 		self.hide_waiting()
-	
+		
 	def get_tags(self):
 		
 		out = None
@@ -103,7 +118,13 @@ class TagDialog(SuperDialog):
 	def on_gettoptags_done(self, sender, output):
 		for tag in output:
 			self.list.add_completion_string(tag.getName(), 'Top Tags')
-			
+		
+		self.okays[0] = True
+		self._check_okays()
+	
 	def on_getfavtags_done(self, sender, output):
 		for tag in output:
 			self.list.add_completion_string(tag.getName(), 'Your Favorite Tags')
+		
+		self.okays[1] = True
+		self._check_okays()

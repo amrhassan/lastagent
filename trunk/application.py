@@ -119,7 +119,6 @@ class Application(object):
 			os.system('cp -f lastagent.hidden.desktop ~/.config/autostart/')
 		else:
 			os.system('rm -f ~/.config/autostart/lastagent.hidden.desktop')
-
 	
 	def run(self):
 		

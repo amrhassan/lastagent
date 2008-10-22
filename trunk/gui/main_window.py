@@ -22,7 +22,6 @@ import gtk
 import gobject
 import pylast
 from pylast import Track
-from cacher import Cacher
 import os
 import sys
 import players.current
@@ -39,6 +38,7 @@ from add_dialog import *
 from presets_edit_dialog import *
 from status_bar import *
 from auth_dialog import *
+from art_box import *
 
 PROCESS_TAG = 0
 PROCESS_LOVE = 1
@@ -62,7 +62,6 @@ class MainWindow(gtk.Window):
 		self.presets_dict = {}	#{preset_radio_menuitem: 'preset_name',}
 		
 		self.hidden = False
-		self.art_store = ImageStore()
 		
 		get_factory().add_default()
 	
@@ -92,7 +91,7 @@ class MainWindow(gtk.Window):
 		#declarations
 		self.main_box = gtk.VBox()
 		self.content_box = gtk.HBox(False, 10)
-		self.art = gtk.Image()
+		self.art = ArtBox(self.app)
 		self.art_box = gtk.VBox()
 		self.track_box = gtk.VBox()
 		self.title_label = TitleLabel()
@@ -307,7 +306,7 @@ class MainWindow(gtk.Window):
 				track_item = gtk.ImageMenuItem()
 				
 				size = self.app.presets.get_int('menu_track_art_size', self.active_preset)
-				track_item.set_image(gtk.image_new_from_pixbuf(self.art_store.get_image(self.current_art_filename, size)))
+				track_item.set_image(self.art.get_image_resized(size))
 				
 				vbox = gtk.VBox()
 				vbox_dummy1 = gtk.VBox()
@@ -374,7 +373,7 @@ class MainWindow(gtk.Window):
 		
 		profile_item = gtk.ImageMenuItem('_My Last.fm Page')
 		profile_item.set_image(gtk.image_new_from_stock(STOCK_NETWORK, gtk.ICON_SIZE_MENU))
-		profile_item.connect('button-release-event', self.on_profile_item_clicked)
+		profile_item.connect('button-press-event', self.on_profile_item_clicked)
 		menu.append(profile_item)
 		menu.append(gtk.SeparatorMenuItem())
 		
@@ -438,6 +437,7 @@ class MainWindow(gtk.Window):
 		return None
 	
 	def show_not_playing(self, not_playing = True):
+		gtk.gdk.threads_enter()
 		if not_playing:
 			self.not_playing_label.show()
 			self.track_box.hide()
@@ -449,32 +449,24 @@ class MainWindow(gtk.Window):
 			self.not_playing_label.hide()
 			self.track_box.show()
 			self.track_buttons_box.set_sensitive(True)
+		gtk.gdk.threads_leave()
 		
-		self.set_art()
-	
-	def set_art(self, image_filepath = None):
-		if not image_filepath:
-			image_filepath = 'gui/images/album.png'
-		
-		dimension = self.app.presets.get_int('main_art_dimension', self.active_preset)
-		image_pixbuf = self.art_store.get_image(image_filepath, dimension)
-		
-		if image_pixbuf:
-			self.current_art_filename = image_filepath
-			self.art.set_from_pixbuf(image_pixbuf)
+		self.art.show_default()
 
 	def show_track(self):
 		self.restart_timer()
 		data = self.get_playing_data()
 		
 		if not data:
-			gtk.gdk.threads_enter()
 			self.show_not_playing()
+			
+			gtk.gdk.threads_enter()
 			self.shown_track = None
 			self.shown_album = None
 			self.shown_artist = None
 			self.reset_size()
 			gtk.gdk.threads_leave()
+			
 			return
 		
 		player = data[0]
@@ -483,13 +475,13 @@ class MainWindow(gtk.Window):
 		if self.shown_track and track._hash() == self.shown_track._hash():
 			return
 		
-		gtk.gdk.threads_enter()
-		self.album_label.hide()
+		self.art.show_default()
 		self.show_not_playing(not_playing = False)
 		
+		gtk.gdk.threads_enter()
+		self.album_label.hide()
 		self.artist_label.set_artist(track.getArtist())
 		self.title_label.set_track(track)
-		self.set_art()
 		
 		artist = track.getArtist()
 		
@@ -511,11 +503,6 @@ class MainWindow(gtk.Window):
 		self.timer = threading.Timer(interval, self.show_track)
 		self.timer.start()
 	
-	def _set_art_callback(self, sender, file_path):
-		gtk.gdk.threads_enter()
-		self.set_art(file_path)
-		gtk.gdk.threads_leave()
-	
 	def _get_image_callback(self, sender, url):
 		
 		#show album
@@ -526,9 +513,7 @@ class MainWindow(gtk.Window):
 			self.album_label.set_album(self.shown_album)
 			gtk.gdk.threads_leave()
 		
-		#get cached image
-		cacher = Cacher(self.app.cache_dir)
-		cacher.async_get_cached(url, self._set_art_callback)
+		self.art.set_art(url)
 	
 	def set_status_working(self, process, object):
 		
@@ -770,8 +755,8 @@ class MainWindow(gtk.Window):
 				button.make_normal()
 		
 		#to reset the art
-		self.shown_track = None
-		self.set_art()
+		self.art.set_size(self.app.presets.get_int('main_art_dimension', self.active_preset))
+		self.art.reset()
 
 	def on_edit_menu_clicked(self, sender, event):
 		d = EditPresets(self, self.app, self.apply_configs, self.change_preset)

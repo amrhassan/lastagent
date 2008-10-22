@@ -20,6 +20,8 @@
 
 import gtk
 import threading
+from cacher import *
+from image_store import *
 
 class SuperDialog(gtk.Dialog):
 	def __init__(self, title = None, parent = None, flags = 0, buttons = None):

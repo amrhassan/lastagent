@@ -22,6 +22,7 @@ import gtk
 import threading
 from cacher import *
 from image_store import *
+import pango
 
 class SuperDialog(gtk.Dialog):
 	def __init__(self, title = None, parent = None, flags = 0, buttons = None):
@@ -47,21 +48,25 @@ class PlaylistCombo(gtk.ComboBox):
 	def __init__(self):
 		gtk.ComboBox.__init__(self)
 		
-		self.p_model = gtk.ListStore(str, str)
-		name_renderer = gtk.CellRendererText()
-		plays_renderer = gtk.CellRendererText()
+		self.p_model = gtk.ListStore(str, str, gtk.gdk.Pixbuf)
+		title_r = gtk.CellRendererText()
+		plays_r = gtk.CellRendererText()
+		image_r = gtk.CellRendererPixbuf()
 		
 		self.set_model(self.p_model)
 		
-		self.pack_start(name_renderer, True)
-		self.pack_start(plays_renderer, False)
-		self.add_attribute(name_renderer, 'text', 0)
-		self.add_attribute(plays_renderer, 'text', 1)
+		self.pack_start(image_r, False)
+		self.pack_start(title_r, True)
+		self.pack_start(plays_r, False)
 		
-		self.add_playlist('(None)', None)
+		self.add_attribute(title_r, 'text', 0)
+		self.add_attribute(plays_r, 'text', 1)
+		self.add_attribute(image_r, 'pixbuf', 2)
+		
+		self.add_playlist('(None)', None, None)
 		self.set_active(0)
 	
-	def add_playlist(self, name, size):
+	def add_playlist(self, title, size, pixbuf):
 		
 		if size == None:
 			size = ''
@@ -72,7 +77,7 @@ class PlaylistCombo(gtk.ComboBox):
 		elif size > 1:
 			size = str(size) + ' tracks'
 		
-		self.p_model.append([name, size])
+		self.p_model.append([title, size, pixbuf])
 	
 
 class MessageBox(gtk.Dialog):

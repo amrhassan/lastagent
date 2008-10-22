@@ -445,7 +445,9 @@ class MainWindow(gtk.Window):
 			self.album_label.hide()
 			self.status_icon.set_tooltip(self.get_title())
 			self.status_bar.set_to_not_playing()
+			self.art.disable()
 		else:
+			self.art.enable()
 			self.not_playing_label.hide()
 			self.track_box.show()
 			self.track_buttons_box.set_sensitive(True)

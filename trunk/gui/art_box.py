@@ -70,3 +70,9 @@ class ArtBox(gtk.Image):
 	
 	def reset(self):
 		self._set_image(self.image_path)
+	
+	def disable(self):
+		self.set_sensitive(False)
+	
+	def enable(self):
+		self.set_sensitive(True)

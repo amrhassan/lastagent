@@ -23,6 +23,8 @@ import pylast
 from stock_setup import *
 from custom_widgets import *
 from custom_labels import *
+from cacher import *
+from image_store import *
 
 class AddDialog(SuperDialog):
 	
@@ -84,8 +86,19 @@ class AddDialog(SuperDialog):
 		
 	
 	def on_getplaylists_done(self, sender, list):
-		for playlist in list:
-			self.playlists_combo.add_playlist(playlist.getTitle(), playlist.getSize())
+		for p in list:
+			title = p.getTitle()
+			size = p.getSize()
+			
+			image_url = p.getImage()
+			if image_url:
+				image_path = Cacher(self.app.cache_dir).get_cached(image_url)
+				pixbuf = ImageStore().get_image(image_path, 35)
+			else:
+				pixbuf = None
+			
+			
+			self.playlists_combo.add_playlist(title, size, pixbuf)
 			
 		self.playlists = list
 		

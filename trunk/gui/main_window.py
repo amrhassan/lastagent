@@ -527,6 +527,7 @@ class MainWindow(gtk.Window):
 		elif process == PROCESS_ADD:
 			text = 'Adding ' + object.toStr() + ' to a playlist...'
 		
+		#working status is always set from this thread, no need to thread_enter() and thread_leave() it.
 		self.status_bar.set_status(text)
 		self.status_bar.set_icon_from_animation(self.waiting_animation)
 	
@@ -541,8 +542,10 @@ class MainWindow(gtk.Window):
 		elif process == PROCESS_ADD:
 			name = 'added'
 		
+		gtk.gdk.threads_enter()
 		self.status_bar.set_status('%s was %s successfully.' %(object.toStr(), name), 5.0)
 		self.status_bar.set_icon_from_stock(gtk.STOCK_APPLY)
+		gtk.gdk.threads_leave()
 	
 	def set_status_error(self, process, object):
 		
@@ -554,9 +557,11 @@ class MainWindow(gtk.Window):
 			action = 'shared'
 		elif process == PROCESS_ADD:
 			action = 'added'
-			
+		
+		gtk.gdk.threads_enter()
 		self.status_bar.set_status('%s could not be %s.' %(object.toStr(), action), 5.0)
 		self.status_bar.set_icon_from_stock(gtk.STOCK_DIALOG_ERROR)
+		gtk.gdk.threads_leave()
 		
 		message = 'An error has occured and %s was not %s.\n\nDetails:\n%s' \
 		%(object.toStr(), action, object.last_error().__str__())

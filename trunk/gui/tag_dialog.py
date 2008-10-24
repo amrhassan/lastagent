@@ -80,11 +80,12 @@ class TagDialog(SuperDialog):
 	def on_gettags_done(self, sender, tags):
 		
 		if sender.last_error():
-			self.tags_entry.set_text(sender.last_error().__str__())
 			return
 		
 		for tag in tags:
+			gtk.gdk.threads_enter()
 			self.list.add_list_string(tag.getName())
+			gtk.gdk.threads_leave()
 		
 		self.okays[2] = True
 		self._check_okays()
@@ -94,12 +95,12 @@ class TagDialog(SuperDialog):
 			if not o:
 				return
 		
+		gtk.gdk.threads_enter()
 		self.list.set_sensitive(True)
-		
 		self.set_response_sensitive(gtk.RESPONSE_OK, True)
 		self.list.add_entry.grab_focus()
-		
 		self.hide_waiting()
+		gtk.gdk.threads_leave()
 		
 	def get_tags(self):
 		
@@ -117,14 +118,18 @@ class TagDialog(SuperDialog):
 	
 	def on_gettoptags_done(self, sender, output):
 		for tag in output:
+			gtk.gdk.threads_enter()
 			self.list.add_completion_string(tag.getName(), 'Top Tags')
+			gtk.gdk.threads_leave()
 		
 		self.okays[0] = True
 		self._check_okays()
 	
 	def on_getfavtags_done(self, sender, output):
 		for tag in output:
+			gtk.gdk.threads_enter()
 			self.list.add_completion_string(tag.getName(), 'Your Favorite Tags')
+			gtk.gdk.threads_leave()
 		
 		self.okays[1] = True
 		self._check_okays()

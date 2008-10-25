@@ -23,14 +23,14 @@ import gtk
 
 MAIN_THREAD_NAME = 'MainThread'
 
-def threads_lock():
+def threads_lock(main_thread_name = MAIN_THREAD_NAME):
 	name = threading.currentThread().getName()
 	
-	if name != MAIN_THREAD_NAME:
+	if name != main_thread_name:
 		gtk.gdk.threads_enter()
 
-def threads_unlock():
+def threads_unlock(main_thread_name = MAIN_THREAD_NAME):
 	name = threading.currentThread().getName()
 	
-	if name != MAIN_THREAD_NAME:
+	if name != main_thread_name:
 		gtk.gdk.threads_leave()

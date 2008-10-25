@@ -50,14 +50,13 @@ class ArtBox(gtk.Image):
 		cacher.async_get_cached(image_url, self._get_path_callback)
 	
 	def _get_path_callback(self, sender, path):
-		threads_lock()
 		self._set_image(path)
-		threads_unlock()
 	
 	def _set_image(self, image_path):
+		threads_lock()
 		self.image_path = image_path
 		self.set_from_pixbuf(self.store.get_image(image_path, self.image_size))
-		
+		threads_unlock()
 	
 	def get_pixbuf_resized(self, size):
 		return self.store.get_image(self.image_path, size)
@@ -69,9 +68,7 @@ class ArtBox(gtk.Image):
 		self._set_image(self.default_image_path)
 	
 	def reset(self):
-		threads_lock()
 		self._set_image(self.image_path)
-		threads_unlock()
 	
 	def disable(self):
 		self.set_sensitive(False)

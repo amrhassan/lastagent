@@ -24,6 +24,7 @@ import pylast
 from editable_list import EditableList
 from stock_setup import *
 from custom_widgets import *
+from safe_threading import *
 
 class TagDialog(SuperDialog):
 	
@@ -83,9 +84,9 @@ class TagDialog(SuperDialog):
 			return
 		
 		for tag in tags:
-			gtk.gdk.threads_enter()
+			threads_lock()
 			self.list.add_list_string(tag.getName())
-			gtk.gdk.threads_leave()
+			threads_unlock()
 		
 		self.okays[2] = True
 		self._check_okays()
@@ -95,12 +96,12 @@ class TagDialog(SuperDialog):
 			if not o:
 				return
 		
-		gtk.gdk.threads_enter()
+		threads_lock()
 		self.list.set_sensitive(True)
 		self.set_response_sensitive(gtk.RESPONSE_OK, True)
 		self.list.add_entry.grab_focus()
 		self.hide_waiting()
-		gtk.gdk.threads_leave()
+		threads_unlock()
 		
 	def get_tags(self):
 		
@@ -118,18 +119,18 @@ class TagDialog(SuperDialog):
 	
 	def on_gettoptags_done(self, sender, output):
 		for tag in output:
-			gtk.gdk.threads_enter()
+			threads_lock()
 			self.list.add_completion_string(tag.getName(), 'Top Tags')
-			gtk.gdk.threads_leave()
+			threads_unlock()
 		
 		self.okays[0] = True
 		self._check_okays()
 	
 	def on_getfavtags_done(self, sender, output):
 		for tag in output:
-			gtk.gdk.threads_enter()
+			threads_lock()
 			self.list.add_completion_string(tag.getName(), 'Your Favorite Tags')
-			gtk.gdk.threads_leave()
+			threads_unlock()
 		
 		self.okays[1] = True
 		self._check_okays()

@@ -39,6 +39,7 @@ from presets_edit_dialog import *
 from status_bar import *
 from auth_dialog import *
 from art_box import *
+from safe_threading import *
 
 PROCESS_TAG = 0
 PROCESS_LOVE = 1
@@ -437,7 +438,7 @@ class MainWindow(gtk.Window):
 		return None
 	
 	def show_not_playing(self, not_playing = True):
-		gtk.gdk.threads_enter()
+		threads_lock()
 		if not_playing:
 			self.not_playing_label.show()
 			self.track_box.hide()
@@ -451,7 +452,7 @@ class MainWindow(gtk.Window):
 			self.not_playing_label.hide()
 			self.track_box.show()
 			self.track_buttons_box.set_sensitive(True)
-		gtk.gdk.threads_leave()
+		threads_unlock()
 		
 		self.art.show_default()
 
@@ -462,12 +463,12 @@ class MainWindow(gtk.Window):
 		if not data:
 			self.show_not_playing()
 			
-			gtk.gdk.threads_enter()
+			threads_lock()
 			self.shown_track = None
 			self.shown_album = None
 			self.shown_artist = None
 			self.reset_size()
-			gtk.gdk.threads_leave()
+			threads_unlock()
 			
 			return
 		
@@ -480,7 +481,7 @@ class MainWindow(gtk.Window):
 		self.art.show_default()
 		self.show_not_playing(not_playing = False)
 		
-		gtk.gdk.threads_enter()
+		threads_lock()
 		self.album_label.hide()
 		self.artist_label.set_artist(track.getArtist())
 		self.title_label.set_track(track)
@@ -493,7 +494,7 @@ class MainWindow(gtk.Window):
 		self.status_icon.set_tooltip(track.toStr())
 		self.status_bar.set_player(player)
 		self.reset_size()
-		gtk.gdk.threads_leave()
+		threads_unlock()
 		
 		track.async_call(track.getImage, self._get_image_callback, (pylast.IMAGE_LARGE, True))
 	
@@ -508,11 +509,11 @@ class MainWindow(gtk.Window):
 		
 		#show album
 		if sender.getAlbum().getTitle() and self.app.presets.get_bool('main_show_album', self.active_preset):
-			gtk.gdk.threads_enter()
+			threads_lock()
 			self.album_label.show()
 			self.shown_album = sender.getAlbum()
 			self.album_label.set_album(self.shown_album)
-			gtk.gdk.threads_leave()
+			threads_unlock()
 		
 		self.art.set_art(url)
 	
@@ -527,9 +528,10 @@ class MainWindow(gtk.Window):
 		elif process == PROCESS_ADD:
 			text = 'Adding ' + object.toStr() + ' to a playlist...'
 		
-		#working status is always set from this thread, no need to thread_enter() and thread_leave() it.
+		threads_lock()
 		self.status_bar.set_status(text)
 		self.status_bar.set_icon_from_animation(self.waiting_animation)
+		threads_unlock()
 	
 	def set_status_success(self, process, object):
 		
@@ -542,10 +544,10 @@ class MainWindow(gtk.Window):
 		elif process == PROCESS_ADD:
 			name = 'added'
 		
-		gtk.gdk.threads_enter()
+		threads_lock()
 		self.status_bar.set_status('%s was %s successfully.' %(object.toStr(), name), 5.0)
 		self.status_bar.set_icon_from_stock(gtk.STOCK_APPLY)
-		gtk.gdk.threads_leave()
+		threads_unlock()
 	
 	def set_status_error(self, process, object):
 		
@@ -558,10 +560,10 @@ class MainWindow(gtk.Window):
 		elif process == PROCESS_ADD:
 			action = 'added'
 		
-		gtk.gdk.threads_enter()
+		threads_lock()
 		self.status_bar.set_status('%s could not be %s.' %(object.toStr(), action), 5.0)
 		self.status_bar.set_icon_from_stock(gtk.STOCK_DIALOG_ERROR)
-		gtk.gdk.threads_leave()
+		threads_unlock()
 		
 		message = 'An error has occured and %s was not %s.\n\nDetails:\n%s' \
 		%(object.toStr(), action, object.last_error().__str__())

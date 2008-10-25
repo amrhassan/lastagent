@@ -22,7 +22,7 @@ import gtk
 import pylast
 import threading
 import webbrowser
-
+from safe_threading import *
 
 class AuthDialog(gtk.Dialog):
 	def __init__(self, parent, app):
@@ -115,10 +115,10 @@ class AuthDialog(gtk.Dialog):
 		self.token = token
 		self.auth_url = self.sg.getAuthURL(token)
 		
-		gtk.gdk.threads_enter()
+		threads_lock()
 		self.url_entry.set_text(self.auth_url)
 		self.url_box.set_sensitive(True)
-		gtk.gdk.threads_leave()
+		threads_unlock()
 		
 		self.sg.async_call(self.do_get_data)
 

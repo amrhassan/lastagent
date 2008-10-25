@@ -24,7 +24,7 @@ import pylast
 from editable_list import EditableList
 from stock_setup import *
 from custom_widgets import *
-
+from safe_threading import *
 
 class ShareDialog(SuperDialog):
 	
@@ -42,7 +42,7 @@ class ShareDialog(SuperDialog):
 		self.show_waiting()
 	
 	def on_getfriends_done(self, sender, friends):
-		gtk.gdk.threads_enter()
+		threads_lock()
 		for friend in friends:
 			self.list.add_completion_string(friend.getName(), 'Friends')
 		
@@ -54,7 +54,7 @@ class ShareDialog(SuperDialog):
 		self.set_default_response(gtk.RESPONSE_OK)
 		self.list.add_entry.grab_focus()
 		self.hide_waiting()
-		gtk.gdk.threads_leave()
+		threads_unlock()
 	
 	def setup(self):
 		

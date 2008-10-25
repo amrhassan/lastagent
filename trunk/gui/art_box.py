@@ -22,6 +22,7 @@ import gtk
 import threading
 from cacher import *
 from image_store import *
+from safe_threading import *
 import pylast
 
 class ArtBox(gtk.Image):
@@ -49,12 +50,11 @@ class ArtBox(gtk.Image):
 		cacher.async_get_cached(image_url, self._get_path_callback)
 	
 	def _get_path_callback(self, sender, path):
-		gtk.gdk.threads_enter()
+		threads_lock()
 		self._set_image(path)
-		gtk.gdk.threads_leave()
+		threads_unlock()
 	
 	def _set_image(self, image_path):
-		
 		self.image_path = image_path
 		self.set_from_pixbuf(self.store.get_image(image_path, self.image_size))
 		
@@ -66,12 +66,12 @@ class ArtBox(gtk.Image):
 		return gtk.image_new_from_pixbuf(self.get_pixbuf_resized(size))
 	
 	def show_default(self):
-		gtk.gdk.threads_enter()
 		self._set_image(self.default_image_path)
-		gtk.gdk.threads_leave()
 	
 	def reset(self):
+		threads_lock()
 		self._set_image(self.image_path)
+		threads_unlock()
 	
 	def disable(self):
 		self.set_sensitive(False)

@@ -55,7 +55,7 @@ class EditPresets(gtk.Dialog):
 		self.register_bool_option('main_smaller_buttons', "_Smaller buttons.")
 		self.register_bool_option('main_show_art', "Show the album art (if available).")
 		self.register_int_option('main_art_dimension', "Size of the album art: ")
-		self.register_bool_option('main_resizable', "_Resizable window.")
+		self.register_bool_option('main_resizable', "_Resizable main window (doesn't autoresize).")
 		self.register_int_option('main_initial_width', 'Initial window width (if resizable).')
 		self.register_bool_option('main_decorated', "Show the window's _borders.")
 		self.register_bool_option('main_skip_taskbar', "Skip the _taskbar.")

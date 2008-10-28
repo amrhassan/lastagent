@@ -330,7 +330,8 @@ class MainWindow(gtk.Window):
 				
 				menu.append(track_item)
 			else:
-				show_item = gtk.ImageMenuItem('Sh_ow')
+				show_item = gtk.CheckMenuItem('Show _Main Window')
+				show_item.set_active(self.get_property('visible'))
 				show_item.connect('button-release-event', self.on_track_menuitem_pressed)
 				menu.append(show_item)
 			
@@ -663,8 +664,7 @@ class MainWindow(gtk.Window):
 		d.run()
 
 	def on_track_menuitem_pressed(self, sender, event):
-		print "pressed"
-		self.present()
+		self.toggle_iconified()
 	
 	def on_self_hide(self, sender):
 		self.hidden = True

@@ -100,6 +100,7 @@ class MainWindow(gtk.Window):
 		self.artist_label = ArtistLabel()
 		self.artist_box = gtk.HBox()
 		self.by_label = gtk.Label()
+		self.from_label = gtk.Label()
 		self.not_playing_label = gtk.Label()
 		self.track_pane_box = gtk.VBox()
 		self.love_button = MainButton()
@@ -188,6 +189,10 @@ class MainWindow(gtk.Window):
 		self.by_label.set_markup('<b>by </b>')
 		self.by_label.show()
 		
+		#from_label
+		self.from_label.set_text('from ')
+		self.from_label.show()
+		
 		#artist_box
 		self.artist_box.pack_start(self.by_label, False, False)
 		self.artist_box.pack_start(self.artist_label, False, False)
@@ -245,14 +250,15 @@ class MainWindow(gtk.Window):
 		self.track_buttons_box.pack_end(self.love_button, False, False, 2)
 		
 		#album_box
+		self.album_box.pack_start(self.from_label, False, False)
 		self.album_box.pack_start(self.album_label, False, False)
-		self.album_box.show()
 		
 		#album_label
 		self.album_label.set_alignment(0, 0.5)
 		self.album_label.set_ellipsize(pango.ELLIPSIZE_END)
 		self.album_label.set_tag_action(self.tag_album_action)
 		self.album_label.set_share_action(self.share_album_action)
+		self.album_label.show()
 		
 		#track_pane_box
 		self.track_pane_box.pack_start(self.track_box, False, False)
@@ -444,7 +450,7 @@ class MainWindow(gtk.Window):
 			self.not_playing_label.show()
 			self.track_box.hide()
 			self.track_buttons_box.set_sensitive(False)
-			self.album_label.hide()
+			self.album_box.hide()
 			self.status_icon.set_tooltip(self.get_title())
 			self.status_bar.set_to_not_playing()
 			self.art.disable()
@@ -483,7 +489,7 @@ class MainWindow(gtk.Window):
 		self.show_not_playing(not_playing = False)
 		
 		threads_lock()
-		self.album_label.hide()
+		self.album_box.hide()
 		self.artist_label.set_artist(track.getArtist())
 		self.title_label.set_track(track)
 		
@@ -511,7 +517,7 @@ class MainWindow(gtk.Window):
 		#show album
 		if sender.getAlbum().getTitle() and self.app.presets.get_bool('main_show_album', self.active_preset):
 			threads_lock()
-			self.album_label.show()
+			self.album_box.show()
 			self.shown_album = sender.getAlbum()
 			self.album_label.set_album(self.shown_album)
 			threads_unlock()

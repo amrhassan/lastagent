@@ -326,12 +326,12 @@ class MainWindow(gtk.Window):
 				track_item.add(vbox)
 				
 				
-				track_item.connect('button-press-event', self.on_track_menuitem_pressed)
+				track_item.connect('button-release-event', self.on_track_menuitem_pressed)
 				
 				menu.append(track_item)
 			else:
 				show_item = gtk.ImageMenuItem('Sh_ow')
-				show_item.connect('button-press-event', self.on_track_menuitem_pressed)
+				show_item.connect('button-release-event', self.on_track_menuitem_pressed)
 				menu.append(show_item)
 			
 			menu.append(gtk.SeparatorMenuItem())
@@ -374,7 +374,7 @@ class MainWindow(gtk.Window):
 		
 		profile_item = gtk.ImageMenuItem('_My Last.fm Page')
 		profile_item.set_image(gtk.image_new_from_stock(STOCK_NETWORK, gtk.ICON_SIZE_MENU))
-		profile_item.connect('button-press-event', self.on_profile_item_clicked)
+		profile_item.connect('button-release-event', self.on_profile_item_clicked)
 		menu.append(profile_item)
 		menu.append(gtk.SeparatorMenuItem())
 		
@@ -649,7 +649,7 @@ class MainWindow(gtk.Window):
 			self.hide()
 	
 	def on_status_icon_popup(self, statusicon, button, time):
-		self._create_tray_menu().popup(None, None, None, button, time)
+		self._create_tray_menu().popup(None, None, gtk.status_icon_position_menu, button, time, statusicon)
 	
 	def on_quit_action_activate(self, sender):
 		quit()

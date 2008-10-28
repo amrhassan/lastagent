@@ -54,8 +54,10 @@ class ArtBox(gtk.Image):
 	
 	def _set_image(self, image_path):
 		threads_lock()
-		self.image_path = image_path
-		self.set_from_pixbuf(self.store.get_image(image_path, self.image_size))
+		pixbuf = self.store.get_image(image_path, self.image_size)
+		if pixbuf:
+			self.image_path = image_path
+			self.set_from_pixbuf(pixbuf)
 		threads_unlock()
 	
 	def get_pixbuf_resized(self, size):

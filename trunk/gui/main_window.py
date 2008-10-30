@@ -40,6 +40,7 @@ from status_bar import *
 from auth_dialog import *
 from art_box import *
 from safe_threading import *
+from big_label import *
 
 PROCESS_TAG = 0
 PROCESS_LOVE = 1
@@ -87,6 +88,7 @@ class MainWindow(gtk.Window):
 	
 	def reset_size(self):
 		self.resize(self.app.presets.get_int('main_initial_width', self.active_preset), 1)
+		pass
 	
 	def setup(self):
 		#declarations
@@ -119,6 +121,7 @@ class MainWindow(gtk.Window):
 		self.status_icon = gtk.StatusIcon()
 		self.album_label = AlbumLabel()
 		self.album_box = gtk.HBox()
+		self.summary_label = BigLabel()
 		self.waiting_animation = gtk.gdk.PixbufAnimation('gui/images/waiting1.gif')
 		self.quit_action = gtk.Action('quit', '_Quit', 'Exit', gtk.STOCK_QUIT)
 		self.about_action = gtk.Action('about', '_About', 'About', gtk.STOCK_ABOUT)
@@ -212,7 +215,7 @@ class MainWindow(gtk.Window):
 		self.status_bar.set_to_not_playing()
 		
 		#tag_button
-		self.tag_button.set_image(gtk.image_new_from_stock(STOCK_TAG, gtk.ICON_SIZE_BUTTON))
+		self.tag_button.set_image(gtk.image_new_from_stock(STOCK_TAG, gtk.ICON_SIZE_MENU))
 		self.tag_button.connect_object('clicked', gtk.Action.activate, self.tag_track_action)
 		self.tag_button.set_normal_label('_Tag')
 		self.tag_button.set_smaller_tooltip('Tag')
@@ -220,7 +223,7 @@ class MainWindow(gtk.Window):
 		self.tag_button.show()
 		
 		#share_button
-		self.share_button.set_image(gtk.image_new_from_stock(STOCK_SHARE, gtk.ICON_SIZE_BUTTON))
+		self.share_button.set_image(gtk.image_new_from_stock(STOCK_SHARE, gtk.ICON_SIZE_MENU))
 		self.share_button.connect_object('clicked', gtk.Action.activate, self.share_track_action)
 		self.share_button.set_normal_label('_Share')
 		self.share_button.set_smaller_tooltip('Share')
@@ -228,7 +231,7 @@ class MainWindow(gtk.Window):
 		self.share_button.show()
 		
 		#playlist_add_button
-		self.playlist_add_button.set_image(gtk.image_new_from_stock(STOCK_PLAYLIST, gtk.ICON_SIZE_BUTTON))
+		self.playlist_add_button.set_image(gtk.image_new_from_stock(STOCK_PLAYLIST, gtk.ICON_SIZE_MENU))
 		self.playlist_add_button.connect_object('clicked', gtk.Action.activate, self.playlist_add_action)
 		self.playlist_add_button.set_normal_label('_Add')
 		self.playlist_add_button.set_smaller_tooltip('Add to a playlist')
@@ -236,7 +239,7 @@ class MainWindow(gtk.Window):
 		self.playlist_add_button.show()
 		
 		#love_button
-		self.love_button.set_image(gtk.image_new_from_stock(STOCK_LOVE, gtk.ICON_SIZE_BUTTON))
+		self.love_button.set_image(gtk.image_new_from_stock(STOCK_LOVE, gtk.ICON_SIZE_MENU))
 		self.love_button.connect_object('clicked', gtk.Action.activate, self.love_track_action)
 		self.love_button.set_normal_label('_Love')
 		self.love_button.set_smaller_tooltip('Love')
@@ -260,9 +263,13 @@ class MainWindow(gtk.Window):
 		self.album_label.set_share_action(self.share_album_action)
 		self.album_label.show()
 		
+		#summary_label
+		self.summary_label.show()
+		
 		#track_pane_box
 		self.track_pane_box.pack_start(self.track_box, False, False)
 		self.track_pane_box.pack_start(self.not_playing_label)
+		self.track_pane_box.pack_start(self.summary_label, True, True, 5)
 		self.track_pane_box.pack_end(self.track_buttons_box, False)
 		self.track_pane_box.show()
 		
@@ -454,6 +461,7 @@ class MainWindow(gtk.Window):
 			self.status_icon.set_tooltip(self.get_title())
 			self.status_bar.set_to_not_playing()
 			self.art.disable()
+			self.summary_label.reset_text()
 		else:
 			self.art.enable()
 			self.not_playing_label.hide()
@@ -474,7 +482,7 @@ class MainWindow(gtk.Window):
 			self.shown_track = None
 			self.shown_album = None
 			self.shown_artist = None
-			self.reset_size()
+			##self.reset_size()
 			threads_unlock()
 			
 			return
@@ -489,6 +497,7 @@ class MainWindow(gtk.Window):
 		self.show_not_playing(not_playing = False)
 		
 		threads_lock()
+		self.summary_label.reset_text()
 		self.album_box.hide()
 		self.artist_label.set_artist(track.getArtist())
 		self.title_label.set_track(track)
@@ -500,10 +509,17 @@ class MainWindow(gtk.Window):
 		self.shown_album = None
 		self.status_icon.set_tooltip(track.toStr())
 		self.status_bar.set_player(player)
-		self.reset_size()
+		##self.reset_size()
 		threads_unlock()
 		
 		track.async_call(track.getImage, self._get_image_callback, (pylast.IMAGE_LARGE, True))
+		artist.async_call(artist.getBioSummary, self._get_biosummary_callback)
+	
+	def _get_biosummary_callback(self, sender, summary):
+		if summary:
+			threads_lock()
+			self.summary_label.set_text(summary)
+			threads_unlock()
 	
 	def restart_timer(self):
 		
@@ -721,6 +737,12 @@ class MainWindow(gtk.Window):
 		self.set_resizable(self.app.presets.get_bool('main_resizable', self.active_preset))
 		self.set_decorated(self.app.presets.get_bool('main_decorated', self.active_preset))
 		self.reset_size()
+		
+		#summary_label
+		if self.app.presets.get_bool('main_show_bio', self.active_preset):
+			self.summary_label.show()
+		else:
+			self.summary_label.hide()
 		
 		#status_bar
 		if self.app.presets.get_bool('main_show_statusbar', self.active_preset):

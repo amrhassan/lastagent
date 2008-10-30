@@ -27,7 +27,7 @@ def get_default(value_name, section = None):
 		'main_keep_above': True,
 		'main_opacity': 1.0,
 		'main_skip_taskbar': True,
-		'main_resizable': False,
+		'main_resizable': True,
 		'main_decorated': True,
 		'main_show_statusbar': True,
 		'main_show_buttons': True,
@@ -35,7 +35,8 @@ def get_default(value_name, section = None):
 		'main_show_title': True,
 		'main_show_album': True,
 		'main_show_art': True,
-		'main_initial_width': 500,
+		'main_show_bio': True,
+		'main_initial_width': 550,
 		'main_smaller_buttons': False,
 		'menu_show_track': True,
 		'menu_track_art_size': 40,
@@ -53,6 +54,7 @@ def get_default(value_name, section = None):
 			'main_smaller_buttons': True,
 			'main_initial_width': 390,
 			'main_resizable': True,
+			'main_show_bio': False,
 		},
 		
 		'preset:Even Smaller':{
@@ -60,7 +62,9 @@ def get_default(value_name, section = None):
 			'main_smaller_buttons': True,
 			'main_show_statusbar': False,
 			'main_decorated': False,
-			'main_show_album': False
+			'main_show_album': False,
+			'main_show_bio': False,
+			'main_resizable': False,
 		},
 		
 		'preset:Just Buttons':{
@@ -70,7 +74,9 @@ def get_default(value_name, section = None):
 			'main_decorated': False,
 			'main_show_album': False,
 			'main_show_artist': False,
-			'main_show_title': False
+			'main_show_title': False,
+			'main_show_bio': False,
+			'main_resizable': False,
 		},
 		
 		'preset:No Art':{
@@ -78,6 +84,7 @@ def get_default(value_name, section = None):
 			'main_initial_width': 350,
 			'main_resizable': True,
 			'main_smaller_buttons': True,
+			'main_show_bio': False,
 		},
 	}
 	

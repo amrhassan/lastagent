@@ -51,6 +51,7 @@ class EditPresets(gtk.Dialog):
 		self.register_bool_option('main_show_artist', "Show the track's _artist name.")
 		self.register_bool_option('main_show_title', "Show the track's _title.")
 		self.register_bool_option('main_show_album', "Show the track's a_lbum (if available).")
+		self.register_bool_option('main_show_bio', "Show the artist's bio summary.")
 		self.register_bool_option('main_show_buttons', "Show buttons.")
 		self.register_bool_option('main_smaller_buttons', "_Smaller buttons.")
 		self.register_bool_option('main_show_art', "Show the album art (if available).")

@@ -22,11 +22,11 @@ import urllib
 import os
 import pylast
 
-class Cacher(pylast.Asynchronizer):
+class Cacher(pylast._Asynchronizer):
 	def __init__(self, cache_dir):
 		self.cache_dir = cache_dir
 		
-		pylast.Asynchronizer.__init__(self)
+		pylast._Asynchronizer.__init__(self)
 		
 		if not os.path.exists(cache_dir):
 			os.mkdir(cache_dir)

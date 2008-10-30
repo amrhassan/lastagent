@@ -29,7 +29,7 @@ import gobject
 import webbrowser
 import default_values
 
-REQURIRED_PYLAST = '= 0.2.16'
+REQURIRED_PYLAST = '= 0.2.17'
 
 def pylast_check(required):
 	pylast_url = 'http://pylast.googlecode.com/'

@@ -7,7 +7,7 @@ Comment=A Last.fm music tracker
 Icon=/usr/share/lastagent/gui/images/app_blue.png
 Exec=lastagent
 Path=/usr/share/lastagent
-Categories=GTK;Utility;Music;Audio;AudioVideo
+Categories=GTK;Music;Audio;AudioVideo
 Terminal=false
 
 

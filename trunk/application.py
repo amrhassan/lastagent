@@ -91,7 +91,7 @@ API_SECRET = 	'861595fdeeaf6142def95a0317482251'
 NAME = 'Last Agent'
 AUTHOR = 'Amr Hassan'
 COMMENT = 'A Last.fm music tracker for Linux'
-VERSION = '0.2.06b'
+VERSION = '0.3.01'
 
 
 class Application(object):
@@ -104,7 +104,7 @@ class Application(object):
 		if not os.path.exists(self.config_dir):
 			os.mkdir(self.config_dir)
 		
-		self.presets = ini.INI(os.path.join('/', self.config_dir, 'display.conf'), default_values.get_default)
+		self.presets = ini.INI(os.path.join('/', self.config_dir, 'display.new.conf'), default_values.get_default)
 		self.user_details = ini.INI(os.path.join('/', self.config_dir, 'user.conf'), default_values.get_default)
 		self.settings = ini.INI(os.path.join('/', self.config_dir, 'settings.conf'), default_values.get_default)
 		

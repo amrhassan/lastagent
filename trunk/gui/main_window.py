@@ -743,6 +743,8 @@ class MainWindow(gtk.Window):
 			self.summary_label.show()
 		else:
 			self.summary_label.hide()
+		self.summary_label.set_use_small_text(self.app.presets.get_bool('main_bio_use_small_text', self.active_preset))
+		self.summary_label.set_use_scrollbars(self.app.presets.get_bool('main_bio_use_scrollbars', self.active_preset))
 		
 		#status_bar
 		if self.app.presets.get_bool('main_show_statusbar', self.active_preset):

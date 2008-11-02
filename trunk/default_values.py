@@ -46,6 +46,8 @@ def get_default(value_name, section = None):
 		'autocomplete_from_friends': True,
 		'icon_color': 'blue',
 		'run_on_session_startup': False,
+		'main_bio_use_scrollbars': True,
+		'main_bio_use_small_text': True,
 	}
 	
 	section_values = {

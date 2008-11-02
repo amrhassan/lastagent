@@ -38,7 +38,7 @@ class EditPresets(gtk.Dialog):
 		self.top_label = gtk.Label()
 		self.top_combo = gtk.combo_box_new_text()
 		self.top_add = gtk.Button()
-		#self.top_rename = gtk.Button()
+		##self.top_rename = gtk.Button()
 		self.top_remove = gtk.Button()
 		self.options_container = gtk.VBox()
 		
@@ -52,6 +52,8 @@ class EditPresets(gtk.Dialog):
 		self.register_bool_option('main_show_title', "Show the track's _title.")
 		self.register_bool_option('main_show_album', "Show the track's a_lbum (if available).")
 		self.register_bool_option('main_show_bio', "Show the artist's bio summary.")
+		self.register_bool_option('main_bio_use_small_text', "Use small text.", tab = 1)
+		self.register_bool_option('main_bio_use_scrollbars', "Use scrollbars (when required)", tab = 1)
 		self.register_bool_option('main_show_buttons', "Show buttons.")
 		self.register_bool_option('main_smaller_buttons', "_Smaller buttons.")
 		self.register_bool_option('main_show_art', "Show the album art (if available).")
@@ -99,10 +101,13 @@ class EditPresets(gtk.Dialog):
 		self.load_presets()
 		self.show_all()
 	
-	def register_bool_option(self, name, label):
+	def register_bool_option(self, name, label, tab = 0):
 		option = BoolOption(self.app.presets, self.get_selected_preset, name, label, self.apply_func)
 		self.bool_options.append(option)
-		self.options_container.pack_start(option, False, False)
+		
+		hbox = gtk.HBox()
+		hbox.pack_start(option, False, False, tab*15)
+		self.options_container.pack_start(hbox, False, False)
 
 	def register_int_option(self, name, label):
 		option = IntOption(self.app.presets, self.get_selected_preset, name, label, self.apply_func)

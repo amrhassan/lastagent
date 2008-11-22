@@ -53,7 +53,7 @@ class EditPresets(gtk.Dialog):
 		self.register_bool_option('main_show_album', "Show the track's a_lbum (if available).")
 		self.register_bool_option('main_show_bio', "Show the artist's bio summary.")
 		self.register_bool_option('main_bio_use_small_text', "Use small text.", tab = 1)
-		self.register_bool_option('main_bio_use_scrollbars', "Use scrollbars (when required)", tab = 1)
+		self.register_bool_option('main_bio_use_scrollbars', "Use scrollbars (when required).", tab = 1)
 		self.register_bool_option('main_show_buttons', "Show buttons.")
 		self.register_bool_option('main_smaller_buttons', "_Smaller buttons.")
 		self.register_bool_option('main_show_art', "Show the album art (if available).")

@@ -512,7 +512,7 @@ class MainWindow(gtk.Window):
 		##self.reset_size()
 		threads_unlock()
 		
-		track.async_call(track.getImage, self._get_image_callback, (pylast.IMAGE_LARGE, True))
+		track.async_call(track.getAlbum, self._get_album_callback)
 		artist.async_call(artist.getBioSummary, self._get_biosummary_callback)
 	
 	def _get_biosummary_callback(self, sender, summary):
@@ -528,17 +528,22 @@ class MainWindow(gtk.Window):
 		self.timer = threading.Timer(interval, self.show_track)
 		self.timer.start()
 	
-	def _get_image_callback(self, sender, url):
+	def _get_album_callback(self, sender, album):
 		
 		#show album
-		if sender.getAlbum().getTitle() and self.app.presets.get_bool('main_show_album', self.active_preset):
+		if album and self.app.presets.get_bool('main_show_album', self.active_preset):
 			threads_lock()
 			self.album_box.show()
 			self.shown_album = sender.getAlbum()
 			self.album_label.set_album(self.shown_album)
 			threads_unlock()
 		
-		self.art.set_art(url)
+		if album:
+			image_url = album.getImage()
+		else:
+			image_url = self.shown_artist.getImage()
+		
+		self.art.set_art(image_url)
 	
 	def set_status_working(self, process, object):
 		

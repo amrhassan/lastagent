@@ -29,7 +29,7 @@ import gobject
 import webbrowser
 import default_values
 
-REQURIRED_PYLAST = '= 0.2.17'
+REQURIRED_PYLAST = '= 0.2.18'
 
 def pylast_check(required):
 	pylast_url = 'http://pylast.googlecode.com/'
@@ -91,7 +91,7 @@ API_SECRET = 	'861595fdeeaf6142def95a0317482251'
 NAME = 'Last Agent'
 AUTHOR = 'Amr Hassan'
 COMMENT = 'A Last.fm music tracker for Linux'
-VERSION = '0.3.01'
+VERSION = '0.3.02'
 
 
 class Application(object):

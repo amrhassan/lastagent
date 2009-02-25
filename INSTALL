@@ -1,0 +1,6 @@
+Steps for installation:
+
+1. Open a terminal.
+2. cd into the this directory
+3. Run 'sh installer.sh'. You may need to add "sudo" to the beginning.
+4. You can lunch the app now using the 'lastagent' command, or from the Applications menu.

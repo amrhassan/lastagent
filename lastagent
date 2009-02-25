@@ -1,0 +1,5 @@
+#!/bin/sh
+# Launch lastAgent
+
+cd /usr/share/lastagent
+python lastagent.py $*
